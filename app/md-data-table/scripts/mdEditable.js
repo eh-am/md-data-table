@@ -3,6 +3,7 @@ angular.module('md.data.table')
     .directive('mdEditable', mdEditable);
 
 function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, dateFormat, data, moment) {
+    'use strict';
 
     $scope.editType = editType;
     $scope.maxNoteLength = maxNoteLength;
@@ -24,10 +25,10 @@ function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, 
         $mdDialog.hide({
             data: $scope.editModel.data
         });
-    }
+    };
 }
 
-function mdEditable($mdDialog) {
+function mdEditable($mdDialog,moment) {
     'use strict';
 
     function link(scope, element, attrs, tableCtrl) {
@@ -64,7 +65,7 @@ function mdEditable($mdDialog) {
                         }
                     }
                 }, function () {
-                    console.log("Error hiding edit dialog.");
+                    console.log('Error hiding edit dialog.');
                 });
         });
 
