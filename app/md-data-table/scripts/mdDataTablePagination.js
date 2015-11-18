@@ -125,7 +125,9 @@ function mdDataTablePagination($q) {
       page: '=mdPage',
       rowSelect: '=mdRowSelect',
       total: '@mdTotal',
-      trigger: '=mdTrigger'
+      trigger: '=mdTrigger',
+      showRowSelection: '=mdShowRowSelection',
+      showFirstLast: '=mdShowFirstLast'
     },
     templateUrl: 'templates.md-data-table-pagination.html',
     link: postLink

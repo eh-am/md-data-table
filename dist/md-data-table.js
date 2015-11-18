@@ -491,7 +491,9 @@ function mdDataTablePagination($q) {
       page: '=mdPage',
       rowSelect: '=mdRowSelect',
       total: '@mdTotal',
-      trigger: '=mdTrigger'
+      trigger: '=mdTrigger',
+      showRowSelection: '=mdShowRowSelection',
+      showFirstLast: '=mdShowFirstLast'
     },
     templateUrl: 'templates.md-data-table-pagination.html',
     link: postLink
@@ -965,14 +967,14 @@ angular.module('templates.md-data-table-pagination.html', []).run(['$templateCac
   'use strict';
   $templateCache.put('templates.md-data-table-pagination.html',
     '<div>\n' +
-    '  <span class="label">{{paginationLabel.text}}</span>\n' +
-    '  <md-select ng-model="limit" md-container-class="md-pagination-select" ng-change="onSelect()" aria-label="Row Count" placeholder="{{rowSelect ? rowSelect[0] : 5}}">\n' +
+    '  <span class="label" ng-show="showRowSelection">{{paginationLabel.text}}</span>\n' +
+    '  <md-select ng-show="showRowSelection" ng-model="limit" md-container-class="md-pagination-select" ng-change="onSelect()" aria-label="Row Count" placeholder="{{rowSelect ? rowSelect[0] : 5}}">\n' +
     '    <md-option ng-repeat="rows in rowSelect ? rowSelect : [5, 10, 15]" ng-value="rows">{{rows}}</md-option>\n' +
     '  </md-select>\n' +
     '  <span>{{min()}} - {{max()}} {{paginationLabel.of}} {{total}}</span>\n' +
     '</div>\n' +
     '<div>\n' +
-    '  <md-button type="button" ng-click="first()" ng-disabled="!hasPrevious()" aria-label="First">\n' +
+    '  <md-button ng-show="showFirstLast" type="button" ng-click="first()" ng-disabled="!hasPrevious()" aria-label="First">\n' +
     '    <md-icon md-svg-icon="templates.navigate-first.html"></md-icon>\n' +
     '  </md-button>\n' +
     '  <md-button type="button" ng-click="previous()" ng-disabled="!hasPrevious()" aria-label="Previous">\n' +
@@ -981,7 +983,7 @@ angular.module('templates.md-data-table-pagination.html', []).run(['$templateCac
     '  <md-button type="button" ng-click="next()" ng-disabled="!hasNext()" aria-label="Next">\n' +
     '    <md-icon md-svg-icon="templates.navigate-next.html"></md-icon>\n' +
     '  </md-button>\n' +
-    '  <md-button type="button" ng-click="last()" ng-disabled="!hasNext()" aria-label="Last">\n' +
+    '  <md-button ng-show="showFirstLast" type="button" ng-click="last()" ng-disabled="!hasNext()" aria-label="Last">\n' +
     '    <md-icon md-svg-icon="templates.navigate-last.html"></md-icon>\n' +
     '  </md-button>\n' +
     '</div>\n' +
