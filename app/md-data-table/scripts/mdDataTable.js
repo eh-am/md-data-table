@@ -58,7 +58,7 @@ function mdDataTable($mdTable) {
       body: $q.defer(),
       head: $q.defer()
     };
-    
+
     if($attrs.mdRowSelect) {
       self.columns.push({ isNumeric: false });
       
@@ -133,7 +133,8 @@ function mdDataTable($mdTable) {
   return {
     bindToController: {
       progress: '=mdProgress',
-      selectedItems: '=mdRowSelect'
+      selectedItems: '=mdRowSelect',
+      rowUpdateCallback: '&mdRowUpdateCallback'
     },
     compile: compile,
     controller: Controller,

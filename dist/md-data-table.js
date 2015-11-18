@@ -151,7 +151,7 @@ function mdDataTable($mdTable) {
       body: $q.defer(),
       head: $q.defer()
     };
-    
+
     if($attrs.mdRowSelect) {
       self.columns.push({ isNumeric: false });
       
@@ -226,7 +226,8 @@ function mdDataTable($mdTable) {
   return {
     bindToController: {
       progress: '=mdProgress',
-      selectedItems: '=mdRowSelect'
+      selectedItems: '=mdRowSelect',
+      rowUpdateCallback: '&mdRowUpdateCallback'
     },
     compile: compile,
     controller: Controller,
@@ -684,6 +685,91 @@ function mdTableService() {
   
 }
 
+angular.module('md.data.table')
+    .controller('EditDialogController', mdEditableDialogController)
+    .directive('mdEditable', mdEditable);
+
+function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, dateFormat, data, moment) {
+
+    $scope.editType = editType;
+    $scope.maxNoteLength = maxNoteLength;
+
+    $scope.editModel = {};
+
+    if (editType === 'date' && data && !(data instanceof Date)) {
+        $scope.editModel.data = moment(data, dateFormat).toDate();
+    }
+    else {
+        $scope.editModel.data = data;
+    }
+
+    $scope.close = function () {
+        $mdDialog.hide();
+    };
+
+    $scope.save = function () {
+        $mdDialog.hide({
+            data: $scope.editModel.data
+        });
+    }
+}
+
+function mdEditable($mdDialog) {
+    'use strict';
+
+    function link(scope, element, attrs, tableCtrl) {
+
+        element.on('click', function (event) {
+            event.stopPropagation();
+
+            var type = attrs.mdEditable;
+
+            $mdDialog.show({
+                    controller: 'EditDialogController',
+                    locals: {
+                        editType: type,
+                        dateFormat: scope.dateFormat,
+                        maxNoteLength: scope.maxNoteLength,
+                        data: scope.data
+                    },
+                    templateUrl: 'templates.md-data-table-edit.html',
+                    parent: angular.element(document.body),
+                    targetEvent: event,
+                    clickOutsideToClose: true
+                })
+                .then(function (object) {
+                    if (object && object.data) {
+                        if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
+                            scope.data = moment(object.data).format(scope.dateFormat);
+                        }
+                        else {
+                            scope.data = object.data;
+                        }
+
+                        if(typeof tableCtrl.rowUpdateCallback === 'function') {
+                            tableCtrl.rowUpdateCallback();
+                        }
+                    }
+                }, function () {
+                    console.log("Error hiding edit dialog.");
+                });
+        });
+
+    }
+
+    return {
+        link: link,
+        require: '^^mdDataTable',
+        restrict: 'A',
+        scope: {
+            data: '=',
+            dateFormat: '@',
+            maxNoteLength: '@'
+        }
+    };
+}
+
+
 angular.module('md.data.table').directive('mdSelectAll', mdSelectAll);
 
 function mdSelectAll() {
@@ -801,7 +887,7 @@ function mdSelectRow($mdTable) {
 mdSelectRow.$inject = ['$mdTable'];
 
 
-angular.module('md.table.templates', ['templates.arrow.html', 'templates.navigate-before.html', 'templates.navigate-first.html', 'templates.navigate-last.html', 'templates.navigate-next.html', 'templates.md-data-table-pagination.html', 'templates.md-data-table-progress.html']);
+angular.module('md.table.templates', ['templates.arrow.html', 'templates.navigate-before.html', 'templates.navigate-first.html', 'templates.navigate-last.html', 'templates.navigate-next.html', 'templates.md-data-table-edit.html', 'templates.md-data-table-pagination.html', 'templates.md-data-table-progress.html']);
 
 angular.module('templates.arrow.html', []).run(['$templateCache', function($templateCache) {
   'use strict';
@@ -835,6 +921,44 @@ angular.module('templates.navigate-next.html', []).run(['$templateCache', functi
   $templateCache.put('templates.navigate-next.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>\n' +
     '');
+}]);
+
+angular.module('templates.md-data-table-edit.html', []).run(['$templateCache', function($templateCache) {
+  'use strict';
+  $templateCache.put('templates.md-data-table-edit.html',
+    '<md-dialog aria-label="Edit" ng-cloak>\n' +
+    '    <form>\n' +
+    '        <md-toolbar>\n' +
+    '            <div class="md-toolbar-tools">\n' +
+    '                <h2>Edit</h2>\n' +
+    '            </div>\n' +
+    '        </md-toolbar>\n' +
+    '        <md-dialog-content>\n' +
+    '            <div class="md-dialog-content">\n' +
+    '                <div ng-switch on="editType">\n' +
+    '                    <div ng-switch-when="date">\n' +
+    '                        <md-datepicker ng-model="editModel.data" md-placeholder="Enter date"></md-datepicker>\n' +
+    '                    </div>\n' +
+    '                    <div ng-switch-when="note">\n' +
+    '                        <md-input-container class="md-block">\n' +
+    '                            <textarea ng-model="editModel.data" md-maxlength="{{maxNoteLength}}"></textarea>\n' +
+    '                        </md-input-container>\n' +
+    '                    </div>\n' +
+    '                    <div ng-switch-default>\n' +
+    '                        <md-input-container>\n' +
+    '                            <input ng-model="editModel.data" type="{{editType}}">\n' +
+    '                        </md-input-container>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </md-dialog-content>\n' +
+    '        <div class="md-actions" layout="row">\n' +
+    '            <span flex></span>\n' +
+    '            <md-button ng-click="close()">Cancel</md-button>\n' +
+    '            <md-button ng-click="save()" style="margin-right:20px;">Save</md-button>\n' +
+    '        </div>\n' +
+    '    </form>\n' +
+    '</md-dialog>');
 }]);
 
 angular.module('templates.md-data-table-pagination.html', []).run(['$templateCache', function($templateCache) {
