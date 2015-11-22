@@ -1,33 +1,78 @@
 <md-dialog aria-label="Edit" ng-cloak>
-    <form>
+    <form name="inlineEditForm" novalidate>
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Edit</h2>
             </div>
         </md-toolbar>
-        <md-dialog-content>
+        <md-dialog-content style="width:300px;max-width:800px;max-height:220px;" layout="column"
+                           layout-align="center center">
             <div class="md-dialog-content">
                 <div ng-switch on="editType">
                     <div ng-switch-when="date">
-                        <md-datepicker ng-model="editModel.data" md-placeholder="Enter date"></md-datepicker>
+                        <md-datepicker name="dateField"
+                                       ng-model="editModel.data"
+                                       ng-required="fieldRequired"
+                                       md-max-date="fieldMaxDate"
+                                       md-min-date="fieldMinDate"
+                                       md-placeholder="Enter date"
+                                       aria-label="date"></md-datepicker>
+
+                        <div class="validation-messages" ng-messages="inlineEditForm.dateField.$error"
+                             ng-if="inlineEditForm.dateField.$error">
+                            <div ng-message="required">You did not enter a field</div>
+                            <div ng-message="maxdate">Date is too late!</div>
+                            <div ng-message="mindate">Date is too early!</div>
+                        </div>
                     </div>
                     <div ng-switch-when="note">
                         <md-input-container class="md-block">
-                            <textarea ng-model="editModel.data" md-maxlength="{{maxNoteLength}}"></textarea>
+                                <textarea name="textareaField"
+                                          aria-label="textarea"
+                                          ng-model="editModel.data"
+                                          md-maxlength="{{fieldMaxLength}}"
+                                          rows="5"
+                                          ng-required="fieldRequired"
+                                          style="overflow-y: auto;width:250px;"
+                                >
+                                </textarea>
+
+                            <div ng-messages="inlineEditForm.textareaField.$error"
+                                 ng-if="inlineEditForm.textareaField.$error">
+                                <div ng-message="required">You did not enter a field</div>
+                                <div ng-message="md-maxlength">Your field is too long</div>
+                            </div>
                         </md-input-container>
                     </div>
                     <div ng-switch-default>
                         <md-input-container>
-                            <input ng-model="editModel.data" type="{{editType}}">
+                            <input name="inputField"
+                                   ng-model="editModel.data"
+                                   type="{{editType}}"
+                                   md-maxlength="{{fieldMaxLength}}"
+                                   ng-required="fieldRequired"
+                                   aria-label="input">
+
+                            <div ng-messages="inlineEditForm.inputField.$error"
+                                 ng-if="inlineEditForm.inputField.$error">
+                                <div ng-message="required">You did not enter a field</div>
+                                <div ng-message="md-maxlength">Your field is too long</div>
+                            </div>
                         </md-input-container>
                     </div>
                 </div>
             </div>
+            <!--pre>
+                dateField.$error = {{ inlineEditForm.dateField.$error | json }}
+                textareaField.$error = {{ inlineEditForm.textareaField.$error | json }}
+                inputField.$error = {{ inlineEditForm.inputField.$error | json }}
+            </pre-->
         </md-dialog-content>
-        <div class="md-actions" layout="row">
+        <md-dialog-actions layout="row">
             <span flex></span>
             <md-button ng-click="close()">Cancel</md-button>
-            <md-button ng-click="save()" style="margin-right:20px;">Save</md-button>
-        </div>
+            <md-button class="md-raised md-primary" ng-disabled="inlineEditForm.$invalid" ng-click="save()">Save
+            </md-button>
+        </md-dialog-actions>
     </form>
 </md-dialog>

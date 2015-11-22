@@ -412,6 +412,13 @@ table[md-data-table] > thead[md-table-progress] tr > th > md-progress-linear > .
 table[md-data-table] > thead[md-table-progress] tr > th > md-progress-linear > .md-container > .md-bar {
   height: 3px;
 }
+.validation-messages {
+  color: #f44336;
+  font-size: 12px;
+  line-height: 14px;
+  overflow: hidden;
+  padding-top: 5px;
+}
 md-data-table-container {
   display: block;
   max-width: 100%;

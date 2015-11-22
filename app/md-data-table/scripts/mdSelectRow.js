@@ -15,9 +15,9 @@ function mdSelectRow($mdTable) {
     if(tAttrs.mdDisableSelect) {
       checkbox.attr('ng-disabled', 'isDisabled()');
     }
-    
+
     tElement.prepend(angular.element('<td></td>').append(checkbox));
-    
+
     if(angular.isDefined(tAttrs.mdAutoSelect)) {
       tAttrs.$set('ngClick', 'toggleRow(' + ngRepeat.item + ', $event)');
     }

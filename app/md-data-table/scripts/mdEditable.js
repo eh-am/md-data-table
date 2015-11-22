@@ -2,13 +2,23 @@ angular.module('md.data.table')
     .controller('EditDialogController', mdEditableDialogController)
     .directive('mdEditable', mdEditable);
 
-function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, dateFormat, data, moment) {
+function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength, fieldRequired, dateFormat, fieldMaxDate, fieldMinDate, data, moment) {
     'use strict';
 
-    $scope.editType = editType;
-    $scope.maxNoteLength = maxNoteLength;
-
     $scope.editModel = {};
+
+    $scope.fieldRequired = fieldRequired || false;
+    $scope.editType = editType;
+    $scope.fieldMaxLength = fieldMaxLength;
+
+
+    if (fieldMinDate && (fieldMinDate instanceof Date)) {
+        $scope.fieldMinDate = fieldMinDate;
+    }
+
+    if (fieldMaxDate && (fieldMaxDate instanceof Date)) {
+        $scope.fieldMaxDate = fieldMaxDate;
+    }
 
     if (editType === 'date' && data && !(data instanceof Date)) {
         $scope.editModel.data = moment(data, dateFormat).toDate();
@@ -28,22 +38,47 @@ function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, 
     };
 }
 
-function mdEditable($mdDialog,moment) {
+function mdEditable($mdDialog, moment, $mdTable) {
     'use strict';
+
+    function compile(tElement, tAttrs) {
+
+        //find the row
+        var row = tElement.parent();
+        var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
+
+        //add data item attribute
+        tAttrs.$set('rowData', ngRepeat.item);
+
+        return link;
+    }
 
     function link(scope, element, attrs, tableCtrl) {
 
         element.on('click', function (event) {
             event.stopPropagation();
 
+            //find the row
+            var row = element.parent();
+
+            //check if the record was disabled
+            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) return;
+
+            //get type of edit field
             var type = attrs.mdEditable;
+
+            //get row record
+            var rowData = scope.rowData;
 
             $mdDialog.show({
                     controller: 'EditDialogController',
                     locals: {
                         editType: type,
                         dateFormat: scope.dateFormat,
-                        maxNoteLength: scope.maxNoteLength,
+                        fieldMinDate: scope.fieldMinDate,
+                        fieldMaxDate: scope.fieldMaxDate,
+                        fieldMaxLength: scope.fieldMaxLength,
+                        fieldRequired: scope.fieldRequired,
                         data: scope.data
                     },
                     templateUrl: 'templates.md-data-table-edit.html',
@@ -60,7 +95,17 @@ function mdEditable($mdDialog,moment) {
                             scope.data = object.data;
                         }
 
-                        if(typeof tableCtrl.rowUpdateCallback === 'function') {
+                        //remove duplicates
+                        $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
+
+                        //sync data
+                        $mdTable.updateObject(rowData, attrs.data, scope.data);
+
+                        //update dirty items
+                        tableCtrl.dirtyItems.push(rowData);
+
+                        //call callback
+                        if (typeof tableCtrl.rowUpdateCallback === 'function') {
                             tableCtrl.rowUpdateCallback();
                         }
                     }
@@ -68,17 +113,22 @@ function mdEditable($mdDialog,moment) {
                     console.log('Error hiding edit dialog.');
                 });
         });
-
     }
 
     return {
-        link: link,
+        compile: compile,
         require: '^^mdDataTable',
         restrict: 'A',
         scope: {
-            data: '=',
-            dateFormat: '@',
-            maxNoteLength: '@'
+            rowData: '=',
+            data: '=', //object
+            dateFormat: '@', //string
+            fieldMinDate: '=', //object
+            fieldMaxDate: '=', //object
+            fieldMaxLength: '@', //string
+            fieldRequired: '@' //string
         }
     };
 }
+
+mdEditable.$inject = ['$mdDialog', 'moment', '$mdTable'];

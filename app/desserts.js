@@ -2,6 +2,7 @@
   "count": 9,
   "data": [
     {
+      "id": "1",
       "name": "Frozen yogurt",
       "type": "Ice cream",
       "date": "2015-01-01",
@@ -14,6 +15,7 @@
       "calcium": { "value": 14.0 },
       "iron": { "value": 1.0 }
     }, {
+      "id": "2",
       "name": "Ice cream sandwich",
       "type": "Ice cream",
       "date": "2015-01-01",
@@ -26,6 +28,7 @@
       "calcium": { "value": 8.0 },
       "iron": { "value": 1.0 }
     }, {
+      "id": "3",
       "name": "Eclair",
       "type": "Pastry",
       "date": "2015-01-01",
@@ -38,6 +41,7 @@
       "calcium": { "value":  6.0 },
       "iron": { "value": 7.0 }
     }, {
+      "id": "4",
       "name": "Cupcake",
       "type": "Pastry",
       "date": "2015-01-01",
@@ -50,6 +54,7 @@
       "calcium": { "value": 3.0 },
       "iron": { "value": 8.0 }
     }, {
+      "id": "5",
       "name": "Jelly bean",
       "type": "Candy",
       "date": "2015-01-01",
@@ -62,6 +67,7 @@
       "calcium": { "value": 0.0 },
       "iron": { "value": 0.0 }
     }, {
+      "id": "6",
       "name": "Lollipop",
       "type": "Candy",
       "date": "2015-01-01",
@@ -74,11 +80,12 @@
       "calcium": { "value": 0.0 },
       "iron": { "value": 2.0 }
     }, {
+      "id": "7",
       "name": "Honeycomb",
       "type": "Other",
       "date": "2015-01-01",
       "calories": { "value": 408.0 },
-    "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
+      "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
       "fat": { "value": 3.2 },
       "carbs": { "value": 87.0 },
       "protein": { "value": 6.5 },
@@ -86,11 +93,12 @@
       "calcium": { "value": 0.0 },
       "iron": { "value": 45.0 }
     }, {
+      "id": "8",
       "name": "Donut",
       "type": "Pastry",
       "date": "2015-01-01",
       "calories": { "value": 452.0 },
-    "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
+      "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
       "fat": { "value": 25.0 },
       "carbs": { "value": 51.0 },
       "protein": { "value": 4.9 },
@@ -98,6 +106,7 @@
       "calcium": { "value": 2.0 },
       "iron": { "value": 22.0 }
     }, {
+      "id": "9",
       "name": "KitKat",
       "type": "Candy",
       "date": "2015-01-01",

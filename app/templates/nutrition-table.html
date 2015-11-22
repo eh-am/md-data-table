@@ -7,7 +7,7 @@
 </md-data-table-toolbar>
 
 <md-data-table-container>
-        <table md-data-table md-row-select="selected" md-progress="deferred" md-row-update-callback="rowUpdateCallback()">
+        <table md-data-table md-row-select="selected" md-progress="deferred" md-row-dirty="dirtyItems" md-row-update-callback="rowUpdateCallback()">
             <thead md-order="query.order" md-trigger="onorderchange">
             <tr>
                 <th ng-repeat="column in columns" ng-attr-order-by="{{column.orderBy}}"
@@ -26,7 +26,7 @@
             </thead>
             <tbody>
             <tr md-auto-select md-disable-select="dessert.calories.value > 300"
-                data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+                data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit track by dessert.id">
                 <td md-editable="text" data="dessert.name">{{dessert.name}}</td>
                 <td>
                     <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
@@ -35,7 +35,7 @@
                 </td>
                 <td md-editable="date" date-format="YYYY-MM-DD" data="dessert.date">{{dessert.date}}</td>
                 <td md-editable="number" data="dessert.calories.value">{{dessert.calories.value}}</td>
-                <td md-editable="note" max-note-length="150" data="dessert.note">{{ dessert.note | limitTo: 50 }}{{dessert.note.length > 50 ? '...' : ''}}</td>
+                <td md-editable="note"field-required="true" field-max-length="100" data="dessert.note">{{ dessert.note | limitTo: 50 }}{{dessert.note.length > 50 ? '...' : ''}}</td>
                 <td>{{dessert.fat.value | number: 2}}</td>
                 <td>{{dessert.carbs.value}}</td>
                 <td>{{dessert.protein.value | number: 2}}</td>

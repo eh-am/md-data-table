@@ -94,147 +94,159 @@ mdColumnHeader.$inject = ['$compile', '$interpolate', '$timeout'];
 angular.module('md.data.table').directive('mdDataTable', mdDataTable);
 
 function mdDataTable($mdTable) {
-  'use strict';
-  
-  function compile(tElement, tAttrs) {
-    var head = tElement.find('thead');
-    var foot = tElement.find('tfoot');
-    
-    // make sure the table has a head element
-    if(!head.length) {
-      head = tElement.find('tbody').eq(0);
-      
-      if(head.children().find('th').length) {
-        head.replaceWith('<thead>' + head.html() + '</thead>');
-      } else {
-        throw new Error('mdDataTable', 'Expecting <thead></thead> element.');
-      }
-      
-      head = tElement.find('thead');
-    }
-    
-    var rows = tElement.find('tbody').find('tr');
-    
-    head.attr('md-table-head', '');
-    rows.attr('md-table-row', '');
-    rows.find('td').attr('md-table-cell', '');
-    
-    if(foot.length) {
-      foot.attr('md-table-foot', '');
-      
-      if(tAttrs.mdRowSelect) {
-        foot.find('tr').prepend('<td></td>');
-      }
-    }
-    
-    var ngRepeat = $mdTable.getAttr(rows, 'ngRepeat');
-    
-    if(tAttrs.mdRowSelect && ngRepeat) {
-      rows.attr('md-select-row', '');
-    }
-    
-    if(tAttrs.mdRowSelect && !ngRepeat) {
-      console.warn('Please use ngRepeat to enable row selection.');
-    }
-    
-    if(head.attr('md-order') && !ngRepeat) {
-      console.warn('Column ordering without ngRepeat is not supported.');
-    }
-  }
-  
-  function Controller($attrs, $element, $q, $scope) {
-    var self = this;
-    
-    self.columns = [];
-    self.classes = [];
-    self.isReady = {
-      body: $q.defer(),
-      head: $q.defer()
-    };
+    'use strict';
 
-    if($attrs.mdRowSelect) {
-      self.columns.push({ isNumeric: false });
-      
-      if(!angular.isArray(self.selectedItems)) {
-        self.selectedItems = [];
-        // log warning for developer
-        console.warn('md-row-select="' + $attrs.mdRowSelect + '" : ' +
-        $attrs.mdRowSelect + ' is not defined as an array in your controller, ' +
-        'i.e. ' + $attrs.mdRowSelect + ' = [], two-way data binding will fail.');
-      }
+    function compile(tElement, tAttrs) {
+        var head = tElement.find('thead');
+        var foot = tElement.find('tfoot');
+
+        // make sure the table has a head element
+        if (!head.length) {
+            head = tElement.find('tbody').eq(0);
+
+            if (head.children().find('th').length) {
+                head.replaceWith('<thead>' + head.html() + '</thead>');
+            } else {
+                throw new Error('mdDataTable', 'Expecting <thead></thead> element.');
+            }
+
+            head = tElement.find('thead');
+        }
+
+        var rows = tElement.find('tbody').find('tr');
+
+        head.attr('md-table-head', '');
+        rows.attr('md-table-row', '');
+        rows.find('td').attr('md-table-cell', '');
+
+        if (foot.length) {
+            foot.attr('md-table-foot', '');
+
+            if (tAttrs.mdRowSelect) {
+                foot.find('tr').prepend('<td></td>');
+            }
+        }
+
+        var ngRepeat = $mdTable.getAttr(rows, 'ngRepeat');
+
+        if (tAttrs.mdRowSelect && ngRepeat) {
+            rows.attr('md-select-row', '');
+        }
+
+        if (tAttrs.mdRowSelect && !ngRepeat) {
+            console.warn('Please use ngRepeat to enable row selection.');
+        }
+
+        if (head.attr('md-order') && !ngRepeat) {
+            console.warn('Column ordering without ngRepeat is not supported.');
+        }
     }
-    
-    if($attrs.mdProgress) {
-      $scope.$watch('$mdDataTableCtrl.progress', function () {
-        var deferred = self.defer();
-        $q.when(self.progress)['finally'](deferred.resolve);
-      });
-    }
-    
-    // support theming
-    ['md-primary', 'md-hue-1', 'md-hue-2', 'md-hue-3'].forEach(function(mdClass) {
-      if($element.hasClass(mdClass)) {
-        self.classes.push(mdClass);
-      }
-    });
-    
-    self.defer = function () {
-      if(self.deferred) {
-        self.deferred.reject('cancel');
-      } else if(self.showProgress) {
-        self.showProgress();
-      }
-      
-      self.deferred = $q.defer();
-      self.deferred.promise.then(self.resolve);
-      
-      return self.deferred;
-    };
-    
-    self.resolve = function () {
-      self.deferred = undefined;
-      
-      if(self.hideProgress) {
-        self.hideProgress();
-      }
-    };
-    
-    self.isLastChild = function (siblings, child) {
-      return Array.prototype.indexOf.call(siblings, child) === siblings.length - 1;
-    };
-    
-    self.isReady.body.promise.then(function (ngRepeat) {
-      if($attrs.mdRowSelect && ngRepeat) {
-        self.listener = $scope.$parent.$watch(ngRepeat.items, function (newValue, oldeValue) {
-          if(newValue !== oldeValue) {
-            self.selectedItems.splice(0);
-          }
+
+    function Controller($attrs, $element, $q, $scope) {
+        var self = this;
+
+        self.columns = [];
+        self.classes = [];
+        self.isReady = {
+            body: $q.defer(),
+            head: $q.defer()
+        };
+
+
+        if (!angular.isArray(self.dirtyItems)) {
+            self.dirtyItems = [];
+            // log warning for developer
+            console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
+                $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
+                'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
+        }
+
+        if ($attrs.mdRowSelect) {
+            self.columns.push({isNumeric: false});
+
+            if (!angular.isArray(self.selectedItems)) {
+                self.selectedItems = [];
+                // log warning for developer
+                console.warn('md-row-select="' + $attrs.mdRowSelect + '" : ' +
+                    $attrs.mdRowSelect + ' is not defined as an array in your controller, ' +
+                    'i.e. ' + $attrs.mdRowSelect + ' = [], two-way data binding will fail.');
+            }
+        }
+
+        if ($attrs.mdProgress) {
+            $scope.$watch('$mdDataTableCtrl.progress', function () {
+                var deferred = self.defer();
+                $q.when(self.progress)['finally'](deferred.resolve);
+            });
+        }
+
+        // support theming
+        ['md-primary', 'md-hue-1', 'md-hue-2', 'md-hue-3'].forEach(function (mdClass) {
+            if ($element.hasClass(mdClass)) {
+                self.classes.push(mdClass);
+            }
         });
-      }
-    });
-    
-    self.setColumn = function (column) {
-      self.columns.push({
-        isNumeric: angular.isDefined(column.numeric),
-        unit: column.unit
-      });
+
+        self.defer = function () {
+            if (self.deferred) {
+                self.deferred.reject('cancel');
+            } else if (self.showProgress) {
+                self.showProgress();
+            }
+
+            self.deferred = $q.defer();
+            self.deferred.promise.then(self.resolve);
+
+            return self.deferred;
+        };
+
+        self.resolve = function () {
+            self.deferred = undefined;
+
+            if (self.hideProgress) {
+                self.hideProgress();
+            }
+        };
+
+        self.isLastChild = function (siblings, child) {
+            return Array.prototype.indexOf.call(siblings, child) === siblings.length - 1;
+        };
+
+        self.isReady.body.promise.then(function (ngRepeat) {
+            if ($attrs.mdRowSelect && ngRepeat) {
+                self.listener = $scope.$parent.$watch(ngRepeat.items, function (newValue, oldeValue) {
+                    if (newValue !== oldeValue) {
+                        self.selectedItems.splice(0);
+                        self.dirtyItems.splice(0);
+                    }
+                });
+            }
+        });
+
+        self.setColumn = function (column) {
+            self.columns.push({
+                isNumeric: angular.isDefined(column.numeric),
+                unit: column.unit,
+                name: column.name
+            });
+        };
+    }
+
+    Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
+
+    return {
+        bindToController: {
+            progress: '=mdProgress',
+            selectedItems: '=mdRowSelect',
+            rowUpdateCallback: '&mdRowUpdateCallback',
+            dirtyItems: '=mdRowDirty'
+        },
+        compile: compile,
+        controller: Controller,
+        controllerAs: '$mdDataTableCtrl',
+        restrict: 'A',
+        scope: {}
     };
-  }
-  
-  Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
-  
-  return {
-    bindToController: {
-      progress: '=mdProgress',
-      selectedItems: '=mdRowSelect',
-      rowUpdateCallback: '&mdRowUpdateCallback'
-    },
-    compile: compile,
-    controller: Controller,
-    controllerAs: '$mdDataTableCtrl',
-    restrict: 'A',
-    scope: {}
-  };
 }
 
 mdDataTable.$inject = ['$mdTable'];
@@ -600,104 +612,164 @@ mdTableRow.$inject = ['$mdTable', '$timeout'];
 angular.module('md.data.table').factory('$mdTable', mdTableService);
 
 function mdTableService() {
-  'use strict';
-  
-  var cache = {};
-  
-  function Repeat(ngRepeat) {
-    this._tokens = ngRepeat.split(/\s+/);
-    this._iterator = 0;
-    
-    this.item = this.current();
-    while(this.hasNext() && this.getNext() !== 'in') {
-      this.item += this.current();
+    'use strict';
+
+    var cache = {};
+
+    function Repeat(ngRepeat) {
+        this._tokens = ngRepeat.split(/\s+/);
+        this._iterator = 0;
+
+        this.item = this.current();
+        while (this.hasNext() && this.getNext() !== 'in') {
+            this.item += this.current();
+        }
+
+        this.items = this.getNext();
+        while (this.hasNext() && ['|', 'track'].indexOf(this.getNext()) === -1) {
+            this.items += this.current();
+        }
     }
-    
-    this.items = this.getNext();
-    while(this.hasNext() && ['|', 'track'].indexOf(this.getNext()) === -1) {
-      this.items += this.current();
+
+    Repeat.prototype.current = function () {
+        return this._tokens[this._iterator];
+    };
+
+    Repeat.prototype.getNext = function () {
+        return this._tokens[++this._iterator];
+    };
+
+    Repeat.prototype.getValue = function () {
+        return this._tokens.join(' ');
+    };
+
+    Repeat.prototype.hasNext = function () {
+        return this._iterator < this._tokens.length - 1;
+    };
+
+    /**
+     * Get the value of an atribute given its normalized name.
+     *
+     * @param {jqLite} element - A jqLite element.
+     * @param {string} attr - The normalized name of the attribute.
+     * @returns {string} - The value of the attribute.
+     */
+    function getAttr(element, attr) {
+        var attrs = element.prop('attributes');
+
+        for (var i = 0; i < attrs.length; i++) {
+            if (normalize(attrs.item(i).name) === attr) {
+                return attrs.item(i).value;
+            }
+        }
+
+        return '';
     }
-  }
-  
-  Repeat.prototype.current = function () {
-    return this._tokens[this._iterator];
-  };
-  
-  Repeat.prototype.getNext = function() {
-    return this._tokens[++this._iterator];
-  };
-  
-  Repeat.prototype.getValue = function() {
-    return this._tokens.join(' ');
-  };
-  
-  Repeat.prototype.hasNext = function () {
-    return this._iterator < this._tokens.length - 1;
-  };
-  
-  /**
-   * Get the value of an atribute given its normalized name.
-   *
-   * @param {jqLite} element - A jqLite element.
-   * @param {string} attr - The normalized name of the attribute.
-   * @returns {string} - The value of the attribute.
-   */
-  function getAttr(element, attr) {
-    var attrs = element.prop('attributes');
-    
-    for(var i = 0; i < attrs.length; i++) {
-      if(normalize(attrs.item(i).name) === attr) {
-        return attrs.item(i).value;
-      }
+
+    /**
+     * Normalizes an attribute's name.
+     *
+     * @param {string} attr - The original name of the attribute.
+     * @returns {string} - The normalized name of the attribute.
+     */
+    function normalize(attr) {
+        var tokens = attr.replace(/^((?:x|data)[\:\-_])/i, '').split(/[\:\-_]/);
+        var normal = tokens.shift();
+
+        tokens.forEach(function (token) {
+            normal += token.charAt(0).toUpperCase() + token.slice(1);
+        });
+
+        return normal;
     }
-    
-    return '';
-  }
-  
-  /**
-   * Normalizes an attribute's name.
-   *
-   * @param {string} attr - The original name of the attribute.
-   * @returns {string} - The normalized name of the attribute.
-   */
-  function normalize(attr) {
-    var tokens = attr.replace(/^((?:x|data)[\:\-_])/i, '').split(/[\:\-_]/);
-    var normal = tokens.shift();
-    
-    tokens.forEach(function (token) {
-      normal += token.charAt(0).toUpperCase() + token.slice(1);
-    });
-    
-    return normal;
-  }
-  
-  function parse(ngRepeat) {
-    if(!cache.hasOwnProperty(ngRepeat)) {
-      return (cache[ngRepeat] = new Repeat(ngRepeat));
+
+    function parse(ngRepeat) {
+        if (!cache.hasOwnProperty(ngRepeat)) {
+            return (cache[ngRepeat] = new Repeat(ngRepeat));
+        }
+
+        return cache[ngRepeat];
     }
-    
-    return cache[ngRepeat];
-  }
-  
-  return {
-    getAttr: getAttr,
-    normalize: normalize,
-    parse: parse
-  };
-  
+
+
+    /**
+     * Remove object from array with a given key
+     *
+     * @param items
+     * @param key
+     */
+    function removeDuplicates(items, key) {
+        if (items.length > 0) {
+            angular.forEach(items, function (item, i) {
+                if (item.id === key) {
+                    items.splice(i, 1);
+                    return false;
+                }
+            });
+        }
+    }
+
+    /**
+     * This sets the object property based on the property path provided.
+     * The object name is included in the property.
+     *
+     * var test = {property:value}
+     *
+     * prop should be test.property
+     *
+     * @param obj
+     * @param prop
+     * @param value
+     */
+    function setDeepValue(obj, prop, value) {
+        if (typeof prop === "string") {
+            prop = prop.split(".");
+            prop.shift(); //remove the object name
+        }
+
+        if (prop.length > 1) {
+            var e = prop.shift();
+            setDeepValue(obj[e] =
+                    Object.prototype.toString.call(obj[e]) === "[object Object]"
+                        ? obj[e]
+                        : {},
+                prop,
+                value);
+        } else
+            obj[prop[0]] = value;
+    }
+
+    return {
+        getAttr: getAttr,
+        normalize: normalize,
+        parse: parse,
+        removeDuplicates: removeDuplicates,
+        updateObject: setDeepValue
+    };
+
 }
 
 angular.module('md.data.table')
     .controller('EditDialogController', mdEditableDialogController)
     .directive('mdEditable', mdEditable);
 
-function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, dateFormat, data, moment) {
+function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength, fieldRequired, dateFormat, fieldMaxDate, fieldMinDate, data, moment) {
     'use strict';
 
-    $scope.editType = editType;
-    $scope.maxNoteLength = maxNoteLength;
-
     $scope.editModel = {};
+
+    $scope.fieldRequired = fieldRequired || false;
+    $scope.editType = editType;
+    $scope.fieldMaxLength = fieldMaxLength;
+
+
+    if (fieldMinDate && (fieldMinDate instanceof Date)) {
+        $scope.fieldMinDate = fieldMinDate;
+    }
+
+    if (fieldMaxDate && (fieldMaxDate instanceof Date)) {
+        $scope.fieldMaxDate = fieldMaxDate;
+    }
 
     if (editType === 'date' && data && !(data instanceof Date)) {
         $scope.editModel.data = moment(data, dateFormat).toDate();
@@ -717,22 +789,47 @@ function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, 
     };
 }
 
-function mdEditable($mdDialog,moment) {
+function mdEditable($mdDialog, moment, $mdTable) {
     'use strict';
+
+    function compile(tElement, tAttrs) {
+
+        //find the row
+        var row = tElement.parent();
+        var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
+
+        //add data item attribute
+        tAttrs.$set('rowData', ngRepeat.item);
+
+        return link;
+    }
 
     function link(scope, element, attrs, tableCtrl) {
 
         element.on('click', function (event) {
             event.stopPropagation();
 
+            //find the row
+            var row = element.parent();
+
+            //check if the record was disabled
+            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) return;
+
+            //get type of edit field
             var type = attrs.mdEditable;
+
+            //get row record
+            var rowData = scope.rowData;
 
             $mdDialog.show({
                     controller: 'EditDialogController',
                     locals: {
                         editType: type,
                         dateFormat: scope.dateFormat,
-                        maxNoteLength: scope.maxNoteLength,
+                        fieldMinDate: scope.fieldMinDate,
+                        fieldMaxDate: scope.fieldMaxDate,
+                        fieldMaxLength: scope.fieldMaxLength,
+                        fieldRequired: scope.fieldRequired,
                         data: scope.data
                     },
                     templateUrl: 'templates.md-data-table-edit.html',
@@ -749,7 +846,17 @@ function mdEditable($mdDialog,moment) {
                             scope.data = object.data;
                         }
 
-                        if(typeof tableCtrl.rowUpdateCallback === 'function') {
+                        //remove duplicates
+                        $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
+
+                        //sync data
+                        $mdTable.updateObject(rowData, attrs.data, scope.data);
+
+                        //update dirty items
+                        tableCtrl.dirtyItems.push(rowData);
+
+                        //call callback
+                        if (typeof tableCtrl.rowUpdateCallback === 'function') {
                             tableCtrl.rowUpdateCallback();
                         }
                     }
@@ -757,20 +864,25 @@ function mdEditable($mdDialog,moment) {
                     console.log('Error hiding edit dialog.');
                 });
         });
-
     }
 
     return {
-        link: link,
+        compile: compile,
         require: '^^mdDataTable',
         restrict: 'A',
         scope: {
-            data: '=',
-            dateFormat: '@',
-            maxNoteLength: '@'
+            rowData: '=',
+            data: '=', //object
+            dateFormat: '@', //string
+            fieldMinDate: '=', //object
+            fieldMaxDate: '=', //object
+            fieldMaxLength: '@', //string
+            fieldRequired: '@' //string
         }
     };
 }
+
+mdEditable.$inject = ['$mdDialog', 'moment', '$mdTable'];
 
 
 angular.module('md.data.table').directive('mdSelectAll', mdSelectAll);
@@ -852,9 +964,9 @@ function mdSelectRow($mdTable) {
     if(tAttrs.mdDisableSelect) {
       checkbox.attr('ng-disabled', 'isDisabled()');
     }
-    
+
     tElement.prepend(angular.element('<td></td>').append(checkbox));
-    
+
     if(angular.isDefined(tAttrs.mdAutoSelect)) {
       tAttrs.$set('ngClick', 'toggleRow(' + ngRepeat.item + ', $event)');
     }
@@ -930,36 +1042,81 @@ angular.module('templates.md-data-table-edit.html', []).run(['$templateCache', f
   'use strict';
   $templateCache.put('templates.md-data-table-edit.html',
     '<md-dialog aria-label="Edit" ng-cloak>\n' +
-    '    <form>\n' +
+    '    <form name="inlineEditForm" novalidate>\n' +
     '        <md-toolbar>\n' +
     '            <div class="md-toolbar-tools">\n' +
     '                <h2>Edit</h2>\n' +
     '            </div>\n' +
     '        </md-toolbar>\n' +
-    '        <md-dialog-content>\n' +
+    '        <md-dialog-content style="width:300px;max-width:800px;max-height:220px;" layout="column"\n' +
+    '                           layout-align="center center">\n' +
     '            <div class="md-dialog-content">\n' +
     '                <div ng-switch on="editType">\n' +
     '                    <div ng-switch-when="date">\n' +
-    '                        <md-datepicker ng-model="editModel.data" md-placeholder="Enter date"></md-datepicker>\n' +
+    '                        <md-datepicker name="dateField"\n' +
+    '                                       ng-model="editModel.data"\n' +
+    '                                       ng-required="fieldRequired"\n' +
+    '                                       md-max-date="fieldMaxDate"\n' +
+    '                                       md-min-date="fieldMinDate"\n' +
+    '                                       md-placeholder="Enter date"\n' +
+    '                                       aria-label="date"></md-datepicker>\n' +
+    '\n' +
+    '                        <div class="validation-messages" ng-messages="inlineEditForm.dateField.$error"\n' +
+    '                             ng-if="inlineEditForm.dateField.$error">\n' +
+    '                            <div ng-message="required">You did not enter a field</div>\n' +
+    '                            <div ng-message="maxdate">Date is too late!</div>\n' +
+    '                            <div ng-message="mindate">Date is too early!</div>\n' +
+    '                        </div>\n' +
     '                    </div>\n' +
     '                    <div ng-switch-when="note">\n' +
     '                        <md-input-container class="md-block">\n' +
-    '                            <textarea ng-model="editModel.data" md-maxlength="{{maxNoteLength}}"></textarea>\n' +
+    '                                <textarea name="textareaField"\n' +
+    '                                          aria-label="textarea"\n' +
+    '                                          ng-model="editModel.data"\n' +
+    '                                          md-maxlength="{{fieldMaxLength}}"\n' +
+    '                                          rows="5"\n' +
+    '                                          ng-required="fieldRequired"\n' +
+    '                                          style="overflow-y: auto;width:250px;"\n' +
+    '                                >\n' +
+    '                                </textarea>\n' +
+    '\n' +
+    '                            <div ng-messages="inlineEditForm.textareaField.$error"\n' +
+    '                                 ng-if="inlineEditForm.textareaField.$error">\n' +
+    '                                <div ng-message="required">You did not enter a field</div>\n' +
+    '                                <div ng-message="md-maxlength">Your field is too long</div>\n' +
+    '                            </div>\n' +
     '                        </md-input-container>\n' +
     '                    </div>\n' +
     '                    <div ng-switch-default>\n' +
     '                        <md-input-container>\n' +
-    '                            <input ng-model="editModel.data" type="{{editType}}">\n' +
+    '                            <input name="inputField"\n' +
+    '                                   ng-model="editModel.data"\n' +
+    '                                   type="{{editType}}"\n' +
+    '                                   md-maxlength="{{fieldMaxLength}}"\n' +
+    '                                   ng-required="fieldRequired"\n' +
+    '                                   aria-label="input">\n' +
+    '\n' +
+    '                            <div ng-messages="inlineEditForm.inputField.$error"\n' +
+    '                                 ng-if="inlineEditForm.inputField.$error">\n' +
+    '                                <div ng-message="required">You did not enter a field</div>\n' +
+    '                                <div ng-message="md-maxlength">Your field is too long</div>\n' +
+    '                            </div>\n' +
     '                        </md-input-container>\n' +
     '                    </div>\n' +
     '                </div>\n' +
     '            </div>\n' +
+    '            <!--pre>\n' +
+    '                dateField.$error = {{ inlineEditForm.dateField.$error | json }}\n' +
+    '                textareaField.$error = {{ inlineEditForm.textareaField.$error | json }}\n' +
+    '                inputField.$error = {{ inlineEditForm.inputField.$error | json }}\n' +
+    '            </pre-->\n' +
     '        </md-dialog-content>\n' +
-    '        <div class="md-actions" layout="row">\n' +
+    '        <md-dialog-actions layout="row">\n' +
     '            <span flex></span>\n' +
     '            <md-button ng-click="close()">Cancel</md-button>\n' +
-    '            <md-button ng-click="save()" style="margin-right:20px;">Save</md-button>\n' +
-    '        </div>\n' +
+    '            <md-button class="md-raised md-primary" ng-disabled="inlineEditForm.$invalid" ng-click="save()">Save\n' +
+    '            </md-button>\n' +
+    '        </md-dialog-actions>\n' +
     '    </form>\n' +
     '</md-dialog>');
 }]);

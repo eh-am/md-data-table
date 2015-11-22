@@ -29,6 +29,7 @@
   ],
   "dependencies": {
     "angular": "1.4.4",
+    "angular-messages": "1.4.4",
     "angular-material": "1.0.0-rc4",
     "angular-moment":"0.10.3",
     "moment": "2.10.6"

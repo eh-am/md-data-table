@@ -107,6 +107,8 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$q',
         return deferred.promise;
     };
 
+    $scope.dirtyItems = [];
+
     $scope.rowUpdateCallback = function(){
         alert('Update callback called');
     }
