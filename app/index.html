@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="nutritionApp">
 
-  <head>
-    
+<head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
     <title>Nutrition</title>
-    
+
     <link href="angular-material/angular-material.css" rel="stylesheet" type="text/css"/>
     <link href="md-data-table.css" rel="stylesheet" type="text/css"/>
     <link href="app.css" rel="stylesheet" type="text/css"/>
-    
-  </head>
 
-  <body layout="column">
-    
-    <md-toolbar>
-      <div class="md-toolbar-tools">
+</head>
+
+<body layout="column">
+
+<md-toolbar>
+    <div class="md-toolbar-tools">
         <div class="md-title">Material Design Data Table</div>
-      </div>
-    </md-toolbar>
-    
-    <md-content laout="column" flex>
-      <md-card ng-include="'templates/nutrition-table.html'" ng-controller="nutritionController">
-    </md-content>
-    
-    <script type="text/javascript" src="angular/angular.js"></script>
-    <script type="text/javascript" src="angular-messages/angular-messages.min.js"></script>
-    <script type="text/javascript" src="angular-animate/angular-animate.min.js"></script>
-    <script type="text/javascript" src="angular-aria/angular-aria.min.js"></script>
-    <script type="text/javascript" src="angular-material/angular-material.js"></script>
-    <script type="text/javascript" src="moment/min/moment.min.js"></script>
-    <script type="text/javascript" src="angular-moment/angular-moment.min.js"></script>
-    <script type="text/javascript" src="md-data-table.js"></script>
-    
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="scripts/nutritionController.js"></script>
-    
-  </body>
+    </div>
+</md-toolbar>
+
+<md-content>
+    <md-card>
+        <md-card-content ng-include="'templates/nutrition-table.html'" ng-controller="nutritionController"></md-card-content>
+    </md-card>
+
+    <md-card>
+        <md-card-content ng-include="'templates/nutrition-table-client-side-pagination.html'" ng-controller="nutritionController"></md-card-content>
+    </md-card>
+</md-content>
+
+<script type="text/javascript" src="angular/angular.js"></script>
+<script type="text/javascript" src="angular-messages/angular-messages.min.js"></script>
+<script type="text/javascript" src="angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="angular-aria/angular-aria.min.js"></script>
+<script type="text/javascript" src="angular-material/angular-material.js"></script>
+<script type="text/javascript" src="moment/min/moment.min.js"></script>
+<script type="text/javascript" src="angular-moment/angular-moment.min.js"></script>
+<script type="text/javascript" src="md-data-table.js"></script>
+
+<script type="text/javascript" src="app.js"></script>
+<script type="text/javascript" src="scripts/nutritionController.js"></script>
+
+</body>
 </html>

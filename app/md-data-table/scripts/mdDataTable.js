@@ -59,16 +59,15 @@ function mdDataTable($mdTable) {
             head: $q.defer()
         };
 
-
-        if (!angular.isArray(self.dirtyItems)) {
-            self.dirtyItems = [];
-            // log warning for developer
-            console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
-                $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
-                'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
-        }
-
         if ($attrs.mdRowSelect) {
+            if (!angular.isArray(self.dirtyItems)) {
+                self.dirtyItems = [];
+                // log warning for developer
+                console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
+                    $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
+                    'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
+            }
+
             self.columns.push({isNumeric: false});
 
             if (!angular.isArray(self.selectedItems)) {

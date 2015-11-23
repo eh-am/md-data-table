@@ -111,21 +111,17 @@ function mdTableService() {
      * @param value
      */
     function setDeepValue(obj, prop, value) {
-        if (typeof prop === "string") {
-            prop = prop.split(".");
+        if (typeof prop === 'string') {
+            prop = prop.split('.');
             prop.shift(); //remove the object name
         }
 
         if (prop.length > 1) {
             var e = prop.shift();
-            setDeepValue(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else
+            setDeepValue(obj[e] = Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}, prop, value);
+        } else {
             obj[prop[0]] = value;
+        }
     }
 
     return {

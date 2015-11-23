@@ -30,7 +30,7 @@ function mdTableRow($mdTable, $timeout) {
         }
       };
     }
-    
+
     if(attrs.ngRepeat) {
       if(scope.$last) {
         tableCtrl.isReady.body.resolve($mdTable.parse(attrs.ngRepeat));
@@ -54,6 +54,7 @@ function mdTableRow($mdTable, $timeout) {
         }
       });
     });
+
   }
   
   return {

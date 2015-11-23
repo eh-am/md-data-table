@@ -62,7 +62,9 @@ function mdEditable($mdDialog, moment, $mdTable) {
             var row = element.parent();
 
             //check if the record was disabled
-            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) return;
+            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
+                return;
+            }
 
             //get type of edit field
             var type = attrs.mdEditable;

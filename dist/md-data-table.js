@@ -152,16 +152,15 @@ function mdDataTable($mdTable) {
             head: $q.defer()
         };
 
-
-        if (!angular.isArray(self.dirtyItems)) {
-            self.dirtyItems = [];
-            // log warning for developer
-            console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
-                $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
-                'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
-        }
-
         if ($attrs.mdRowSelect) {
+            if (!angular.isArray(self.dirtyItems)) {
+                self.dirtyItems = [];
+                // log warning for developer
+                console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
+                    $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
+                    'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
+            }
+
             self.columns.push({isNumeric: false});
 
             if (!angular.isArray(self.selectedItems)) {
@@ -376,140 +375,154 @@ function mdTableHead($mdTable, $q) {
 
 mdTableHead.$inject = ['$mdTable', '$q'];
 
-angular.module('md.data.table').directive('mdDataTablePagination', mdDataTablePagination);
+angular.module('md.data.table')
+    .filter('startFrom', function () {
+        'use strict';
+
+        return function (input, start) {
+            start = +start; //parse to int
+            return input.slice(start); //adjust the page, starting from page 1
+        };
+    })
+    .directive('mdDataTablePagination', mdDataTablePagination);
 
 function mdDataTablePagination($q) {
-  'use strict';
+    'use strict';
 
-  function postLink(scope, element, attrs) {
-    scope.paginationLabel = {
-      text: 'Rows per page:',
-      of: 'of'
-    };
-    
-    if(angular.isObject(scope.label)) {
-      angular.extend(scope.paginationLabel, scope.label);
-    }
-    
-    // table progress
-    if(angular.isFunction(scope.trigger)) {
-      
-      // the pagination directive is outside the table directive so we need
-      // to locate the controller
-      var findTable = function(element, callback) {
-        while(element.localName !== 'md-data-table-container' && element.previousElementSibling) {
-          element = element.previousElementSibling;
-        }
-        callback(angular.element(element.firstElementChild));
-      };
-      
-      var setTrigger = function(table) {
-        var tableCtrl = table.controller('mdDataTable');
-        
-        if(!tableCtrl) {
-          return console.warn('Table Pagination: Could not locate your table directive, your ' + attrs.mdTrigger + ' function will not work.');
-        }
-        
-        scope.pullTrigger = function () {
-          var deferred = tableCtrl.defer();
-          $q.when(scope.trigger(scope.page, scope.limit))['finally'](deferred.resolve);
+    function postLink(scope, element, attrs) {
+        scope.paginationLabel = {
+            text: 'Rows per page:',
+            of: 'of'
         };
-      };
-      
-      findTable(element.prop('previousElementSibling'), setTrigger);
-    }
-  }
-  
-  function Controller($scope, $timeout) {
-    var min = 1;
-    
-    $scope.hasNext = function () {
-      return (($scope.page * $scope.limit) < $scope.total);
-    };
-    
-    $scope.hasPrevious = function () {
-      return ($scope.page > 1);
-    };
-    
-    $scope.next = function () {
-      $scope.page++;
-      
-      if($scope.pullTrigger) {
-        $timeout($scope.pullTrigger);
-      }
-      
-      min = $scope.min();
-    };
-    
-    $scope.last = function () {
-      $scope.page = Math.ceil($scope.total / $scope.limit);
-      
-      if($scope.pullTrigger) {
-        $timeout($scope.pullTrigger);
-      }
-      
-      min = $scope.min();
-    };
-    
-    $scope.min = function () {
-      return ((($scope.page - 1) * $scope.limit) + 1);
-    };
-    
-    $scope.max = function () {
-      return $scope.hasNext() ? $scope.page * $scope.limit : $scope.total;
-    };
-    
-    $scope.onSelect = function () {
-      $scope.page = Math.floor(min / $scope.limit) + 1;
-      
-      if($scope.pullTrigger) {
-        $timeout($scope.pullTrigger);
-      }
-      
-      min = $scope.min();
-      while((min > $scope.total) && $scope.hasPrevious()) {
-        $scope.previous();
-      }
-    };
-    
-    $scope.previous = function () {
-      $scope.page--;
-      
-      if($scope.pullTrigger) {
-        $timeout($scope.pullTrigger);
-      }
-      
-      min = $scope.min();
-    };
-    
-    $scope.first = function () {
-      $scope.page = 1;
-      
-      if($scope.pullTrigger) {
-        $timeout($scope.pullTrigger);
-      }
-      
-      min = $scope.min();
-    };
-  }
-  
-  Controller.$inject = ['$scope', '$timeout'];
 
-  return {
-    controller: Controller,
-    scope: {
-      label: '=mdLabel',
-      limit: '=mdLimit',
-      page: '=mdPage',
-      rowSelect: '=mdRowSelect',
-      total: '@mdTotal',
-      trigger: '=mdTrigger',
-      showRowSelection: '=mdShowRowSelection',
-      showFirstLast: '=mdShowFirstLast'
-    },
-    templateUrl: 'templates.md-data-table-pagination.html',
-    link: postLink
-  };
+        if (angular.isObject(scope.label)) {
+            angular.extend(scope.paginationLabel, scope.label);
+        }
+
+        // table progress
+        if (angular.isFunction(scope.trigger)) {
+
+            // the pagination directive is outside the table directive so we need
+            // to locate the controller
+            var findTable = function (element, callback) {
+                while (element.localName !== 'md-data-table-container' && element.previousElementSibling) {
+                    element = element.previousElementSibling;
+                }
+                callback(angular.element(element.firstElementChild));
+            };
+
+            var setTrigger = function (table) {
+                var tableCtrl = table.controller('mdDataTable');
+
+                if (!tableCtrl) {
+                    return console.warn('Table Pagination: Could not locate your table directive, your ' + attrs.mdTrigger + ' function will not work.');
+                }
+
+                scope.pullTrigger = function () {
+                    var deferred = tableCtrl.defer();
+                    $q.when(scope.trigger(scope.page, scope.limit))['finally'](deferred.resolve);
+                };
+            };
+
+            findTable(element.prop('previousElementSibling'), setTrigger);
+        }
+
+        if (scope.data){
+            scope.total = scope.data.length;
+        }
+    }
+
+    function Controller($scope, $timeout) {
+        var min = 1;
+
+        $scope.hasNext = function () {
+            return (($scope.page * $scope.limit) < $scope.total);
+        };
+
+        $scope.hasPrevious = function () {
+            return ($scope.page > 1);
+        };
+
+        $scope.next = function () {
+            $scope.page++;
+
+            if ($scope.pullTrigger) {
+                $timeout($scope.pullTrigger);
+            }
+
+            min = $scope.min();
+        };
+
+        $scope.last = function () {
+            $scope.page = Math.ceil($scope.total / $scope.limit);
+
+            if ($scope.pullTrigger) {
+                $timeout($scope.pullTrigger);
+            }
+
+            min = $scope.min();
+        };
+
+        $scope.min = function () {
+            return ((($scope.page - 1) * $scope.limit) + 1);
+        };
+
+        $scope.max = function () {
+            return $scope.hasNext() ? $scope.page * $scope.limit : $scope.total;
+        };
+
+        $scope.onSelect = function () {
+            $scope.page = Math.floor(min / $scope.limit) + 1;
+
+            if ($scope.pullTrigger) {
+                $timeout($scope.pullTrigger);
+            }
+
+            min = $scope.min();
+            while ((min > $scope.total) && $scope.hasPrevious()) {
+                $scope.previous();
+            }
+        };
+
+        $scope.previous = function () {
+            $scope.page--;
+
+            if ($scope.pullTrigger) {
+                $timeout($scope.pullTrigger);
+            }
+
+            min = $scope.min();
+        };
+
+        $scope.first = function () {
+            $scope.page = 1;
+
+            if ($scope.pullTrigger) {
+                $timeout($scope.pullTrigger);
+            }
+
+            min = $scope.min();
+        };
+    }
+
+    Controller.$inject = ['$scope', '$timeout'];
+
+    return {
+        controller: Controller,
+        scope: {
+            label: '=mdLabel',
+            limit: '=mdLimit',
+            page: '=mdPage',
+            data: '=mdData',
+            rowSelect: '=mdRowSelect',
+            total: '@mdTotal',
+            trigger: '=mdTrigger',
+            showRowSelection: '=mdShowRowSelection',
+            showFirstLast: '=mdShowFirstLast'
+        },
+        templateUrl: 'templates.md-data-table-pagination.html',
+        link: postLink
+    };
 }
 
 mdDataTablePagination.$inject = ['$q'];
@@ -575,7 +588,7 @@ function mdTableRow($mdTable, $timeout) {
         }
       };
     }
-    
+
     if(attrs.ngRepeat) {
       if(scope.$last) {
         tableCtrl.isReady.body.resolve($mdTable.parse(attrs.ngRepeat));
@@ -599,6 +612,7 @@ function mdTableRow($mdTable, $timeout) {
         }
       });
     });
+
   }
   
   return {
@@ -722,21 +736,17 @@ function mdTableService() {
      * @param value
      */
     function setDeepValue(obj, prop, value) {
-        if (typeof prop === "string") {
-            prop = prop.split(".");
+        if (typeof prop === 'string') {
+            prop = prop.split('.');
             prop.shift(); //remove the object name
         }
 
         if (prop.length > 1) {
             var e = prop.shift();
-            setDeepValue(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else
+            setDeepValue(obj[e] = Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}, prop, value);
+        } else {
             obj[prop[0]] = value;
+        }
     }
 
     return {
@@ -813,7 +823,9 @@ function mdEditable($mdDialog, moment, $mdTable) {
             var row = element.parent();
 
             //check if the record was disabled
-            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) return;
+            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
+                return;
+            }
 
             //get type of edit field
             var type = attrs.mdEditable;
