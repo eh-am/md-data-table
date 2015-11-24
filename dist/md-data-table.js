@@ -376,10 +376,13 @@ function mdTableHead($mdTable, $q) {
 mdTableHead.$inject = ['$mdTable', '$q'];
 
 angular.module('md.data.table')
-    .filter('startFrom', function () {
+    .filter('mdStartFrom', function () {
         'use strict';
 
         return function (input, start) {
+            if (!input || !input.length) {
+                return;
+            }
             start = +start; //parse to int
             return input.slice(start); //adjust the page, starting from page 1
         };
@@ -427,9 +430,11 @@ function mdDataTablePagination($q) {
             findTable(element.prop('previousElementSibling'), setTrigger);
         }
 
-        if (scope.data){
-            scope.total = scope.data.length;
-        }
+        scope.$watch('data', function (value) {
+            if (value) {
+                scope.total = value.length;
+            }
+        });
     }
 
     function Controller($scope, $timeout) {
