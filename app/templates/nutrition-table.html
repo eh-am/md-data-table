@@ -29,7 +29,8 @@
                 ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit track by dessert.id">
                 <td md-editable="text" data="dessert.name">{{dessert.name}}</td>
                 <td>
-                    <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
+                    <md-select ng-model="dessert.type" placeholder="Other" md-select-update-callback ng-disabled="dessert.calories.value > 300" ng-required="true">
+                        <md-option></md-option>
                         <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
                     </md-select>
                 </td>

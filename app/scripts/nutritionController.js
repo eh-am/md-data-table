@@ -111,7 +111,11 @@ angular.module('nutritionApp')
         $scope.dirtyItems = [];
 
         $scope.rowUpdateCallback = function () {
-            alert('Update callback called');
+            var i = $scope.dirtyItems.length;
+            while (i--) {
+                alert('Update callback called');
+                $scope.dirtyItems.splice(i,1);
+            }
         };
 
     }]);

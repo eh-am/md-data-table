@@ -100,11 +100,18 @@ function mdEditable($mdDialog, moment, $mdTable) {
                         //remove duplicates
                         $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
 
+                        var oldItem = {};
+
+                        angular.copy(rowData,oldItem);
+
                         //sync data
                         $mdTable.updateObject(rowData, attrs.data, scope.data);
 
                         //update dirty items
-                        tableCtrl.dirtyItems.push(rowData);
+                        tableCtrl.dirtyItems.push({
+                            oldItem:oldItem,
+                            newItem:rowData
+                        });
 
                         //call callback
                         if (typeof tableCtrl.rowUpdateCallback === 'function') {
