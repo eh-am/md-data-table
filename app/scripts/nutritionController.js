@@ -108,14 +108,12 @@ angular.module('nutritionApp')
             return deferred.promise;
         };
 
-        $scope.dirtyItems = [];
+        $scope.rowUpdateCallback = function (item,onError) {
+           alert('item :' + item);
+        };
 
-        $scope.rowUpdateCallback = function () {
-            var i = $scope.dirtyItems.length;
-            while (i--) {
-                alert('Update callback called');
-                $scope.dirtyItems.splice(i,1);
-            }
+        $scope.rowClick = function (item){
+            alert('click:' + item);
         };
 
     }]);

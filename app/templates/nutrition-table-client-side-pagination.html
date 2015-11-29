@@ -1,5 +1,5 @@
 <md-data-table-container>
-        <table md-data-table>
+        <table md-data-table md-row-click="rowClick">
             <thead md-order="query.order">
             <tr>
                 <th ng-repeat="column in columns" ng-attr-order-by="{{column.orderBy}}"
@@ -8,7 +8,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="dessert in desserts.data | orderBy: query.order | mdStartFrom:(query.page-1)*query.limit | limitTo:query.limit track by dessert.id">
+            <tr  md-no-select md-no-checkbox ng-repeat="dessert in desserts.data | orderBy: query.order | mdStartFrom:(query.page-1)*query.limit | limitTo:query.limit track by dessert.id">
                 <td>{{dessert.name}}</td>
                 <td>{{dessert.type}}</td>
                 <td>{{dessert.date}}</td>

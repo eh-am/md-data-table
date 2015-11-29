@@ -34,11 +34,9 @@ function mdDataTable($mdTable) {
             }
         }
 
-        var ngRepeat = $mdTable.getAttr(rows, 'ngRepeat');
+        rows.attr('md-select-row', ''); //always add this attribute, use other attributes to control this directive
 
-        if (tAttrs.mdRowSelect && ngRepeat) {
-            rows.attr('md-select-row', '');
-        }
+        var ngRepeat = $mdTable.getAttr(rows, 'ngRepeat');
 
         if (tAttrs.mdRowSelect && !ngRepeat) {
             console.warn('Please use ngRepeat to enable row selection.');
@@ -54,20 +52,13 @@ function mdDataTable($mdTable) {
 
         self.columns = [];
         self.classes = [];
+        self.dirtyItems = [];
         self.isReady = {
             body: $q.defer(),
             head: $q.defer()
         };
 
         if ($attrs.mdRowSelect) {
-            if (!angular.isArray(self.dirtyItems)) {
-                self.dirtyItems = [];
-                // log warning for developer
-                console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
-                    $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
-                    'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
-            }
-
             self.columns.push({isNumeric: false});
 
             if (!angular.isArray(self.selectedItems)) {
@@ -136,6 +127,61 @@ function mdDataTable($mdTable) {
                 name: column.name
             });
         };
+
+        self.processEdit = function (rowData, propertyPath, propertyData, onError) {
+            //remove duplicates
+            $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+            var oldItem = {};
+
+            angular.copy(rowData, oldItem);
+
+            //sync data
+            $mdTable.updateObject(rowData, propertyPath, propertyData);
+
+            //update dirty items
+            self.dirtyItems.push({
+                oldItem: oldItem,
+                newItem: rowData
+            });
+
+            //call callback
+            if (typeof self.rowUpdateCallback === 'function') {
+                //execute the callback for each row
+                var i = self.dirtyItems.length;
+                while (i--) {
+                    var item = self.dirtyItems[i];
+                    self.rowUpdateCallback()(item, function () { //error callback
+                        onError(item.oldItem);
+                    });
+                    self.dirtyItems.splice(i, 1); //remove the item from array
+                }
+            }
+        };
+
+        self.processEditSelect = function (rowData,oldItem,onError) {
+            //remove duplicates
+            $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+            //update dirty items
+            self.dirtyItems.push({
+                oldItem: oldItem,
+                newItem: rowData
+            });
+
+            //call callback
+            if (typeof self.rowUpdateCallback === 'function') {
+                //execute the callback for each row
+                var i = self.dirtyItems.length;
+                while (i--) {
+                    var item = self.dirtyItems[i];
+                    self.rowUpdateCallback()(item, function () { //error callback
+                        onError();
+                    });
+                    self.dirtyItems.splice(i, 1); //remove the item from array
+                }
+            }
+        };
     }
 
     Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
@@ -145,7 +191,7 @@ function mdDataTable($mdTable) {
             progress: '=mdProgress',
             selectedItems: '=mdRowSelect',
             rowUpdateCallback: '&mdRowUpdateCallback',
-            dirtyItems: '=mdRowDirty'
+            rowClick: '=mdRowClick'
         },
         compile: compile,
         controller: Controller,
