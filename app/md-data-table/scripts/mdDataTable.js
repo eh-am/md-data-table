@@ -191,7 +191,8 @@ function mdDataTable($mdTable) {
             progress: '=mdProgress',
             selectedItems: '=mdRowSelect',
             rowUpdateCallback: '&mdRowUpdateCallback',
-            rowClick: '=mdRowClick'
+            rowClick: '=mdRowClick',
+            hasAccess: '@'
         },
         compile: compile,
         controller: Controller,
