@@ -40,7 +40,7 @@ function mdTableRow($mdTable, $timeout) {
                 if (typeof tableCtrl.rowClick === 'function') {
                     tableCtrl.rowClick(item);
                 }
-            }
+            };
         }
 
         if (attrs.ngRepeat) {

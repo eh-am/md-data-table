@@ -149,17 +149,19 @@ function mdDataTable($mdTable) {
             if (typeof self.rowUpdateCallback === 'function') {
                 //execute the callback for each row
                 var i = self.dirtyItems.length;
+                var callback = self.rowUpdateCallback();
+                var errorCallback = function () { //error callback
+                    onError(item.oldItem);
+                };
                 while (i--) {
                     var item = self.dirtyItems[i];
-                    self.rowUpdateCallback()(item, function () { //error callback
-                        onError(item.oldItem);
-                    });
+                    callback(item, errorCallback);
                     self.dirtyItems.splice(i, 1); //remove the item from array
                 }
             }
         };
 
-        self.processEditSelect = function (rowData,oldItem,onError) {
+        self.processEditSelect = function (rowData, oldItem, onError) {
             //remove duplicates
             $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
 
@@ -173,11 +175,10 @@ function mdDataTable($mdTable) {
             if (typeof self.rowUpdateCallback === 'function') {
                 //execute the callback for each row
                 var i = self.dirtyItems.length;
+                var callback = self.rowUpdateCallback();
                 while (i--) {
                     var item = self.dirtyItems[i];
-                    self.rowUpdateCallback()(item, function () { //error callback
-                        onError();
-                    });
+                    callback(item, onError);
                     self.dirtyItems.splice(i, 1); //remove the item from array
                 }
             }

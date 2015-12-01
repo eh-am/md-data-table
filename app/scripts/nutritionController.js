@@ -116,4 +116,10 @@ angular.module('nutritionApp')
             alert('click:' + item);
         };
 
+        $scope.toggleTable = function(){
+            $scope.toggleContainer = !$scope.toggleContainer;
+        };
+
+        $scope.toggleContainer = false;
+
     }]);

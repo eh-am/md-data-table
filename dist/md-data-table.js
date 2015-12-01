@@ -242,17 +242,19 @@ function mdDataTable($mdTable) {
             if (typeof self.rowUpdateCallback === 'function') {
                 //execute the callback for each row
                 var i = self.dirtyItems.length;
+                var callback = self.rowUpdateCallback();
+                var errorCallback = function () { //error callback
+                    onError(item.oldItem);
+                };
                 while (i--) {
                     var item = self.dirtyItems[i];
-                    self.rowUpdateCallback()(item, function () { //error callback
-                        onError(item.oldItem);
-                    });
+                    callback(item, errorCallback);
                     self.dirtyItems.splice(i, 1); //remove the item from array
                 }
             }
         };
 
-        self.processEditSelect = function (rowData,oldItem,onError) {
+        self.processEditSelect = function (rowData, oldItem, onError) {
             //remove duplicates
             $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
 
@@ -266,11 +268,10 @@ function mdDataTable($mdTable) {
             if (typeof self.rowUpdateCallback === 'function') {
                 //execute the callback for each row
                 var i = self.dirtyItems.length;
+                var callback = self.rowUpdateCallback();
                 while (i--) {
                     var item = self.dirtyItems[i];
-                    self.rowUpdateCallback()(item, function () { //error callback
-                        onError();
-                    });
+                    callback(item, onError);
                     self.dirtyItems.splice(i, 1); //remove the item from array
                 }
             }
@@ -648,7 +649,7 @@ function mdTableRow($mdTable, $timeout) {
                 if (typeof tableCtrl.rowClick === 'function') {
                     tableCtrl.rowClick(item);
                 }
-            }
+            };
         }
 
         if (attrs.ngRepeat) {
@@ -881,7 +882,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
         element.on('click', function (event) {
             event.stopPropagation();
 
-            if(tableCtrl.hasAccess == "false"){
+            if(tableCtrl.hasAccess === 'false'){
                 return;
             }
 
@@ -1093,7 +1094,7 @@ angular.module('md.data.table')
  * This directive for the md-select in the md table cell.  The md-select has bugs when it comes to on change event and track by value.
  * The on change event is fired for every item in the list. With this directive we can control the events.
  */
-function mdSelectUpdateCallback($mdTable) {
+function mdSelectUpdateCallback() {
     'use strict';
 
     return {
@@ -1105,7 +1106,7 @@ function mdSelectUpdateCallback($mdTable) {
 
             var oldItem = {};
 
-            scope.$watch(attrs.ngModel, function (newValue, oldValue) {
+            scope.$watch(attrs.ngModel, function (newValue) {
                 if (scope.enableOnChange && newValue !== undefined) {
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 
