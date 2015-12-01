@@ -509,7 +509,7 @@ md-data-table-container {
 }
 .table-column table[md-data-table] > tbody > tr {
   display: block;
-  margin-bottom: 1.6rem;
+  margin-bottom: 0.6rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 .table-column table[md-data-table] > tbody > tr > td {
