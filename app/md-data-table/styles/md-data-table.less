@@ -23,7 +23,7 @@ md-data-table-container {
     padding: 0;
 
     md-option .md-text {
-      font-size: 13px;
+      font-size: @md-font-size;
     }
   }
 }
@@ -96,6 +96,7 @@ md-data-table-container {
   table[md-data-table] {
     width: 100%;
     background-color: transparent;
+    margin-top: 4px;
     margin-bottom: 0;
 
     > thead,
@@ -108,23 +109,24 @@ md-data-table-container {
 
       > tr {
         display: block;
-        border: 1px solid @table-border-color;
-        border-radius: 2px;
         margin-bottom: @table-cell-padding;
-        box-shadow:  0px 1px 3px 0px rgba(0, 0, 0,0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12);
+        box-shadow:  0 1px 3px 0 rgba(0, 0, 0,0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
 
         > td {
           background-color: @md-bg;
+          font-size: @md-font-size;
           display: block;
           vertical-align: middle;
           text-align: right;
+          empty-cells: show;
+        }
+        > td:empty {
+          height: 15px;
         }
         > td[data-title]:before {
           content: attr(data-title);
           float: left;
-          font-size: inherit;
-          font-weight: @table-header-font-weight;
-          color: @table-header-font-color;
+          font-size: @md-font-size;
         }
       }
     }
