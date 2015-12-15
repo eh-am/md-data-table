@@ -993,7 +993,7 @@ function mdSelectAll() {
       scope.mdClasses = tableCtrl.classes;
       
       scope.getCount = function() {
-        return (count = scope.items.reduce(function(sum, item) {
+        return (count = !scope.items?0:scope.items.reduce(function(sum, item) {
           return tableCtrl.isDisabled(item) ? sum : ++sum;
         }, 0));
       };
