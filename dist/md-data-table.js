@@ -886,6 +886,10 @@ function mdEditable($mdDialog, moment, $mdTable) {
                 return;
             }
 
+            if(scope.mdEditableDisabled == 'false'){
+                return;
+            }
+
             //find the row
             var row = element.parent();
 
@@ -952,6 +956,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
             rowData: '=',
             data: '=', //object
             dateFormat: '@', //string
+            mdEditableDisabled: '@',
             fieldMinDate: '=', //object
             fieldMaxDate: '=', //object
             fieldMaxLength: '@', //string
