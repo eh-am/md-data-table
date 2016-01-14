@@ -886,7 +886,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
                 return;
             }
 
-            if(scope.mdEditableDisabled == 'false'){
+            if(scope.mdEditableDisabled === 'true'){
                 return;
             }
 
