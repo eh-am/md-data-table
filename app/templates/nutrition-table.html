@@ -36,7 +36,7 @@
                 </td>
                 <td md-editable="date" date-format="YYYY-MM-DD" data="dessert.date">{{dessert.date}}</td>
                 <td md-editable="number" data="dessert.calories.value">{{dessert.calories.value}}</td>
-                <td md-editable="note"field-required="true" field-max-length="100" data="dessert.note">{{ dessert.note | limitTo: 40 }}{{dessert.note.length > 40 ? '...' : ''}}</td>
+                <td md-editable="note" md-editable-disabled="true" field-required="true" field-max-length="100" data="dessert.note">{{ dessert.note | limitTo: 40 }}{{dessert.note.length > 40 ? '...' : ''}}</td>
                 <td>{{dessert.fat.value | number: 2}}</td>
                 <td>{{dessert.carbs.value}}</td>
                 <td>{{dessert.protein.value | number: 2}}</td>
