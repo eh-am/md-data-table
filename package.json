@@ -1,6 +1,6 @@
 {
   "name": "angular-material-data-table",
-  "version": "0.8.35",
+  "version": "0.8.36",
   "description": "Material Design data table.",
   "repository": {
     "type": "git",
@@ -8,8 +8,8 @@
   },
   "main": "index.js",
   "dependencies": {
-    "angular": "1.4.4",
-    "angular-material": "0.11.4"
+    "angular": "1.4.9",
+    "angular-material": "1.0.4"
   },
   "devDependencies": {
     "bower": "^1.3.9",
