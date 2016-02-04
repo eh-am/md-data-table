@@ -22,6 +22,7 @@ function mdSelectUpdateCallback() {
 
                     tableCtrl.processEditSelect(rowData,oldItem,function () { //error callback
                         angular.copy(oldItem,scope[attrs.ngModel.split('.')[0]]);
+                        scope.enableOnChange = false;
                     });
                 }
             });
