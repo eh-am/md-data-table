@@ -18,11 +18,13 @@ function mdSelectUpdateCallback() {
 
             scope.$watch(attrs.ngModel, function (newValue) {
                 if (scope.enableOnChange && newValue !== undefined) {
+
+                    scope.enableOnChange = false;
+
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 
                     tableCtrl.processEditSelect(rowData,oldItem,function () { //error callback
                         angular.copy(oldItem,scope[attrs.ngModel.split('.')[0]]);
-                        scope.enableOnChange = false;
                     });
                 }
             });
