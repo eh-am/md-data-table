@@ -929,19 +929,19 @@ function mdEditable($mdDialog, moment, $mdTable) {
                     clickOutsideToClose: true
                 })
                 .then(function (object) {
-                    if (object && object.data) {
-                        if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
-                            scope.data = moment(object.data).format(scope.dateFormat);
-                        }
-                        else {
-                            scope.data = object.data;
-                        }
-
-                        tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
-                            scope.rowData = oldItem; //revert the object
-                            scope.data = oldData; //revert the property data
-                        });
+                    //if (object && object.data) {
+                    if (object.data === null) {
+                        scope.data = null;
+                    } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
+                        scope.data = moment(object.data).format(scope.dateFormat);
+                    } else {
+                        scope.data = object.data;
                     }
+                    tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
+                        scope.rowData = oldItem; //revert the object
+                        scope.data = oldData; //revert the property data
+                    });
+                    //}
                 }, function () {
                     console.log('Error hiding edit dialog.');
                 });
