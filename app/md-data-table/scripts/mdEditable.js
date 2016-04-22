@@ -31,9 +31,35 @@ function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength,
     };
 
     $scope.save = function () {
-        $mdDialog.hide({
-            data: $scope.editModel.data
-        });
+        //console.log('scope editType is', $scope.editType);
+        var $form, inputText, inputValue;
+
+        $form = angular.element('form[name="inlineEditForm"]');
+        // I was going this way but then saw that our workaround is necessary only for mdDatepicker
+        //switch ($scope.editType) {
+        //    case 'text':
+        //    case 'number':
+        //    case 'email':
+        //        inputValue = $form.find('input').val();
+        //        break;
+        //    case 'note':
+        //        inputValue = $form.find('textarea').val();
+        //        break;
+        //    case 'date':
+        //        inputText = $form.find('input').val();
+        //        inputValue = moment(inputText, $scope.dateFormat).toDate();
+        //        break;
+        //}
+
+        if ($scope.editType === 'date') {
+            inputText = $form.find('input').val();
+            inputValue = moment(inputText, $scope.dateFormat).toDate();
+            //console.log('hiding inline edit with', inputValue)
+            $mdDialog.hide({data: inputValue});
+        } else {
+            //console.log('hiding inline edit with', $scope.editModel.data)
+            $mdDialog.hide({data: $scope.editModel.data});
+        }
     };
 }
 
