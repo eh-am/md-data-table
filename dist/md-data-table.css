@@ -422,6 +422,105 @@ table[md-data-table] > thead[md-table-progress] tr > th > md-progress-linear > .
   overflow: hidden;
   padding-top: 5px;
 }
+md-select.md-table-select {
+  margin: 0;
+}
+md-select.md-table-select > .md-select-value {
+  padding: 0;
+  min-width: initial;
+  min-height: 24px;
+  border-bottom: 0 !important;
+}
+md-select.md-table-select > .md-select-value > span {
+  height: auto;
+  -webkit-transform: none !important;
+          transform: none !important;
+}
+md-select.md-table-select > .md-select-value > span.md-select-icon {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 24px;
+  margin: 0;
+}
+md-select.md-table-select > .md-select-value > span.md-select-icon:after {
+  top: initial;
+}
+.md-select-menu-container.md-table-select,
+.md-select-menu-container.md-pagination-select {
+  margin-left: -2px;
+  border-radius: 2px;
+}
+.md-select-menu-container.md-table-select md-select-menu,
+.md-select-menu-container.md-pagination-select md-select-menu,
+.md-select-menu-container.md-table-select md-content,
+.md-select-menu-container.md-pagination-select md-content {
+  border-radius: inherit;
+}
+.md-select-menu-container.md-table-select md-content,
+.md-select-menu-container.md-pagination-select md-content {
+  padding: 0;
+}
+.md-select-menu-container.md-table-select .md-text {
+  font-size: 13px;
+}
+.md-select-menu-container.md-pagination-select .md-text {
+  font-size: 12px;
+}
+md-backdrop.md-edit-dialog-backdrop {
+  z-index: 80;
+}
+md-edit-dialog {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  position: fixed;
+  z-index: 81;
+  background-color: #f9f9f9;
+  border-radius: 2px;
+  cursor: default;
+}
+md-edit-dialog > .md-content {
+  padding: 16px 24px 0;
+}
+md-edit-dialog > .md-content .md-title {
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 8px;
+}
+md-edit-dialog > .md-content md-input-container {
+  margin: 0;
+  font-size: 13px;
+}
+md-edit-dialog > .md-content md-input-container input {
+  float: none;
+}
+md-edit-dialog > .md-content md-input-container .md-errors-spacer {
+  min-height: auto;
+  min-width: auto;
+  color: rgba(0, 0, 0, 0.54);
+}
+md-edit-dialog > .md-content md-input-container .md-errors-spacer .md-char-counter {
+  padding: 5px 2px 5px 0;
+}
+md-edit-dialog > .md-content md-input-container [ng-message] {
+  padding: 5px 0 5px 2px;
+}
+md-edit-dialog > .md-actions {
+  margin: 0 16px 8px;
+}
+md-edit-dialog > .md-actions .md-button {
+  margin: 0;
+  min-width: initial;
+}
+md-edit-dialog > .md-actions .md-button + .md-button {
+  margin-left: 8px;
+}
 md-data-table-container {
   display: block;
   max-width: 100%;
