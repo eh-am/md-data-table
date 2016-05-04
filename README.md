@@ -4,7 +4,6 @@ This module is an effort to implement Material Design data tables in [Angular Ma
 
 Specification for Material Design data tables can be found [here](http://www.google.com/design/spec/components/data-tables.html).
 
-* [Voting](#voting)
 * [Demo](#demo)
 * [License](#license)
 * [Installation](#installation)
@@ -13,13 +12,6 @@ Specification for Material Design data tables can be found [here](http://www.goo
 * [API Documentation](#api-documentation)
 * [Contributing] (#contributing)
 
-## Voting
-
-Voting is my attempt to receive more organized feedback from the community on how new features should work or how existing features should be changed. This was inspired by the different request for how row selection should work. This may be the only time I do this but it may be useful again in the future.
-
-I ask that you visit any issues below and follow the instructions for voting for or against it.
-
-[Row Selection Logic, #98](https://github.com/daniel-nagy/md-data-table/issues/98)
 
 ## Demo
 
@@ -153,30 +145,58 @@ angular.module('nutritionApp').controller('nutritionController', ['$nutrition', 
 
 ## Change Log
 
-#### Version 0.8.14
-###### October 3, 2015
+#### v0.8.42
+###### Apr 21, 2016
 
-* Support for various attribute syntaxes. For example, `data-ng-repeat`, `x-ng-repeat`, `x:ng:repeat`, etc.
+#### v0.8.41
+###### Apr 20, 2016
 
-#### Version 0.8.13
-###### September 29, 2015
+#### v0.8.40
+###### Apr 20, 2016
 
-* As [@sbehun](https://github.com/sbehun) pointed out, the default type for `buttons` across browsers is unpredictable and it is safest to always define a type. This version will prevent tables that are wrapped in forms from submitting the form when the pagination buttons are clicked.
+#### v0.8.39
+###### Apr 19, 2016
 
-#### Version 0.8.12
-###### September 25, 2015
+#### v0.8.38
+###### Feb 4, 2016
 
-* Changing Angular Material dependency version to allow versions greater than 0.10.x
+#### v0.8.37
+###### Dec 1, 2016
 
-#### Version 0.8.11
-###### September 6, 2015
+#### v0.8.36
+###### Feb 4, 2016
 
-* Adding support for Browserify.
+#### v0.8.35
+###### Feb 2, 2016
 
-#### Version 0.8.10
-###### August 31, 2015
+#### v0.8.34
+###### Jan 14, 2016
 
-* Fix for issues [#117](https://github.com/daniel-nagy/md-data-table/issues/117) and [#119](https://github.com/daniel-nagy/md-data-table/issues/119)
+#### v0.8.33
+###### Jan 14, 2016
+
+#### v0.8.32
+###### Dec 14, 2015 
+
+#### v0.8.31
+###### Dec 1, 2015
+
+#### v0.8.30
+###### Nov 30, 201
+
+#### v0.8.20
+###### Nov 29, 2015
+
+#### v0.8.19
+###### Nov 24, 2015
+
+#### v0.8.18
+###### Nov 23, 2015
+
+#### v0.8.17
+###### Nov 23, 2015
+
+
 
 View the [archives](ARCHIVE.md) for a complete version history.
 
