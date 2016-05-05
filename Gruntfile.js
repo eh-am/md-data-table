@@ -4,12 +4,15 @@ module.exports = function (grunt) {
   // load plugins
   require('load-grunt-tasks')(grunt, {scope: 'devDependencies'});
 
+  grunt.loadNpmTasks('grunt-karma');
+
+
   grunt.initConfig({
-    
+
     config: {
       livereload: 35729
     },
-    
+
     // Add vendor prefixes
     autoprefixer: {
       options: {
@@ -26,7 +29,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // remove generated files
     clean: {
       app: 'app/app.css',
@@ -45,7 +48,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // static web server
     connect: {
       app: {
@@ -56,9 +59,18 @@ module.exports = function (grunt) {
           livereload: '<%= config.livereload %>',
           base: ['bower_components', 'dist', 'app']
         }
+      },
+      test: {
+        options: {
+          port: 8001,
+          // hostname: '127.0.0.1',
+          hostname: '0.0.0.0',
+          base: ['bower_components', 'dist', 'app']
+        }
       }
     },
-    
+
+
     // minify css files
     cssmin: {
       build: {
@@ -67,7 +79,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // convert templates to javascript and load them into
     // the template cache
     html2js: {
@@ -86,7 +98,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // report bad javascript syntax, uses jshint-stylish for
     // more readable logging to the console
     jshint: {
@@ -97,6 +109,13 @@ module.exports = function (grunt) {
       },
       build: 'app/md-data-table/**/*.js',
       app: ['app/app.js', 'app/scripts/**/*.js']
+    },
+
+
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js'
+      }
     },
 
     // compile less
@@ -121,7 +140,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // perform tasks on file change
     watch: {
       options: {
@@ -158,16 +177,16 @@ module.exports = function (grunt) {
       }
     }
   });
-  
+
   grunt.registerTask('default', function() {
-    
+
     // buld the md-data-table module
     grunt.task.run('build');
-    
+
     // start the app
     grunt.task.run('serve');
   });
-  
+
   grunt.registerTask('build', [
     'jshint:build',
     'less:build',
@@ -177,13 +196,20 @@ module.exports = function (grunt) {
     'concat:build',
     'uglify:build'
   ]);
-  
+
   grunt.registerTask('serve', [
     'jshint:app',
     'less:app',
     'autoprefixer:app',
     'connect:app',
     'watch'
+  ]);
+
+  grunt.registerTask('test:unit', [
+    'html2js', // we have to convert all those .html files to .js ones!
+    'jshint',
+    // 'connect:test',
+    'karma'
   ]);
 
 };

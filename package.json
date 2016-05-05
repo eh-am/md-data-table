@@ -24,8 +24,14 @@
     "grunt-contrib-uglify": "^0.5.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-html2js": "^0.3.2",
+    "grunt-karma": "^1.0.0",
     "grunt-processhtml": "^0.3.7",
+    "jasmine-core": "^2.4.1",
     "jshint-stylish": "^1.0.0",
+    "karma": "^0.13.22",
+    "karma-chrome-launcher": "^1.0.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-spec-reporter": "0.0.26",
     "load-grunt-tasks": "^0.6.0"
   }
 }
