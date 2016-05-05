@@ -118,7 +118,8 @@ module.exports = function (grunt) {
         configFile: 'karma.conf.js'
       },
       watch: {
-        singleRun: false
+        singleRun: false,
+        autoWatch: true
       },
       unit:{  }
     },
@@ -140,10 +141,9 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "protractor.conf.js", // Default config file
-      },
-      watch: {
         keepAlive: true
-      }
+      },
+      watch: {}
     },
     // minify javascript files
     uglify: {
@@ -185,6 +185,14 @@ module.exports = function (grunt) {
       gruntfile: {
         files: 'Gruntfile.js'
       },
+      e2e: {
+        files: 'tests/e2e/**/*.js',
+        tasks: ['protractor']
+      },
+      karma: {
+        files: 'tests/unit/**/*.js',
+        tasks: ['karma:unit']
+      },
       index: {
         files: 'app/index.html'
       }
@@ -197,7 +205,16 @@ module.exports = function (grunt) {
     grunt.task.run('build');
 
     // start the app
-    grunt.task.run('serve');
+    // grunt.task.run('serve');
+
+    // serve, test and watch for changes
+    grunt.task.run([
+      'connect:app',
+      'karma:unit',
+      'protractor',
+      'watch'
+    ]);
+
   });
 
   grunt.registerTask('build', [
@@ -221,37 +238,24 @@ module.exports = function (grunt) {
 
 
 
+  // run a single time
   grunt.registerTask('test:unit', [
     'html2js', // we have to convert all those .html files to .js ones!
     'karma:unit'
   ]);
 
-  grunt.registerTask('test:unit:watch', [
-    'html2js', // we have to convert all those .html files to .js ones!
-    'karma:watch'
-  ]);
+  // run a single time
   grunt.registerTask('test:e2e', [
     'html2js',
     'connect:test',
     'protractor',
   ]);
 
-  grunt.registerTask('test:e2e:watch', [
-    'html2js',
-    'connect:test',
-    'protractor:watch',
-  ]);
-
-  // run both unit and e2e tests
+  // run both unit and e2e tests once
   grunt.registerTask('test', function(){
     grunt.task.run('test:unit');
     grunt.task.run('test:e2e');
   });
 
-  // run unit and e2e tests, then watch for changes
-  grunt.registerTask('test:watch', function(){
-    grunt.task.run('test:unit:watch');
-    grunt.task.run('test:e2e:watch');
-  });
 
 };
