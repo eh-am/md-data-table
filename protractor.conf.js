@@ -10,6 +10,8 @@ exports.config =  {
 
     maxSessions: 1,
 
+    keepAlive: false,
+    
     multiCapabilities: [
         { browserName: 'chrome' }
     ],

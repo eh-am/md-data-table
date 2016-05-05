@@ -114,9 +114,13 @@ module.exports = function (grunt) {
 
 
     karma: {
-      unit: {
+      options: {
         configFile: 'karma.conf.js'
-      }
+      },
+      watch: {
+        singleRun: false
+      },
+      unit:{  }
     },
 
     // compile less
@@ -136,16 +140,10 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "protractor.conf.js", // Default config file
-        keepAlive: false, // If false, the grunt process stops when the test fails.
-        noColor: false, // If true, protractor will not use colors in its output.
-        args: {
-          // Arguments passed to the command
-        }
       },
-      auto: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+      watch: {
         keepAlive: true
-      },
-      singlerun:{}
+      }
     },
     // minify javascript files
     uglify: {
@@ -220,16 +218,40 @@ module.exports = function (grunt) {
     'watch'
   ]);
 
+
+
+
   grunt.registerTask('test:unit', [
     'html2js', // we have to convert all those .html files to .js ones!
-    'jshint',
-    'karma'
+    'karma:unit'
   ]);
 
+  grunt.registerTask('test:unit:watch', [
+    'html2js', // we have to convert all those .html files to .js ones!
+    'karma:watch'
+  ]);
   grunt.registerTask('test:e2e', [
     'html2js',
     'connect:test',
-    'protractor:singlerun',
+    'protractor',
   ]);
+
+  grunt.registerTask('test:e2e:watch', [
+    'html2js',
+    'connect:test',
+    'protractor:watch',
+  ]);
+
+  // run both unit and e2e tests
+  grunt.registerTask('test', function(){
+    grunt.task.run('test:unit');
+    grunt.task.run('test:e2e');
+  });
+
+  // run unit and e2e tests, then watch for changes
+  grunt.registerTask('test:watch', function(){
+    grunt.task.run('test:unit:watch');
+    grunt.task.run('test:e2e:watch');
+  });
 
 };
