@@ -146,6 +146,12 @@ angular.module('nutritionApp').controller('nutritionController', ['$nutrition', 
 ## Testing
 For unit tests, run ``` grunt test:unit ```
 
+For e2e tests, run
+```
+  node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update
+  grunt test:e2e
+```
+
 ## Change Log
 
 #### v0.8.42

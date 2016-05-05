@@ -4,7 +4,8 @@ module.exports = function (grunt) {
   // load plugins
   require('load-grunt-tasks')(grunt, {scope: 'devDependencies'});
 
-  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-karma'); //unit tests
+  grunt.loadNpmTasks('grunt-protractor-runner'); //e2e tests
 
 
   grunt.initConfig({
@@ -132,6 +133,20 @@ module.exports = function (grunt) {
       }
     },
 
+    protractor: {
+      options: {
+        configFile: "protractor.conf.js", // Default config file
+        keepAlive: false, // If false, the grunt process stops when the test fails.
+        noColor: false, // If true, protractor will not use colors in its output.
+        args: {
+          // Arguments passed to the command
+        }
+      },
+      auto: {   // Grunt requires at least one target to run so you can simply put 'all: {}' here too.
+        keepAlive: true
+      },
+      singlerun:{}
+    },
     // minify javascript files
     uglify: {
       build: {
@@ -208,8 +223,13 @@ module.exports = function (grunt) {
   grunt.registerTask('test:unit', [
     'html2js', // we have to convert all those .html files to .js ones!
     'jshint',
-    // 'connect:test',
     'karma'
+  ]);
+
+  grunt.registerTask('test:e2e', [
+    'html2js',
+    'connect:test',
+    'protractor:singlerun',
   ]);
 
 };

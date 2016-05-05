@@ -26,6 +26,7 @@
     "grunt-html2js": "^0.3.2",
     "grunt-karma": "^1.0.0",
     "grunt-processhtml": "^0.3.7",
+    "grunt-protractor-runner": "^3.1.0",
     "jasmine-core": "^2.4.1",
     "jshint-stylish": "^1.0.0",
     "karma": "^0.13.22",
