@@ -62,7 +62,7 @@ angular.module('nutritionApp')
             unit: '%'
         }];
 
-        $http.get('desserts.js').then(function (desserts) {
+        $http.get('desserts.json').then(function (desserts) {
             $scope.desserts = desserts.data;
         });
 
