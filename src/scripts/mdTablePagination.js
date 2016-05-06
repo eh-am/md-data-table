@@ -1,122 +1,136 @@
 'use strict';
 
 angular.module('md.data.table').directive('mdTablePagination', mdTablePagination);
+angular.module('md.data.table')
+    .filter('mdStartFrom', function () {
+        'use strict';
+
+        return function (input, start) {
+            if (!input || !input.length) {
+                return;
+            }
+            start = +start; //parse to int
+            return input.slice(start); //adjust the page, starting from page 1
+        };
+    });
+
 
 function mdTablePagination() {
-  
+
   function compile(tElement) {
     tElement.addClass('md-table-pagination');
   }
-  
-  function Controller($attrs, $scope) {
+
+  function Controller($attrs, $mdUtil, $scope) {
     var self = this;
-    
-    self.$label = angular.extend({
+    var defaultLabel = {
       page: 'Page:',
       rowsPerPage: 'Rows per page:',
       of: 'of'
-    }, $scope.$eval(self.label) || {});
-    
-    function isPositive(number) {
-      return number > 0;
-    }
-    
-    function isZero(number) {
-      return number === 0 || number === '0';
-    }
-    
-    self.disableNext = function () {
-      return isZero(self.limit) || !self.hasNext();
     };
-    
+
+    self.label = angular.copy(defaultLabel);
+
+    function isPositive(number) {
+      return parseInt(number, 10) > 0;
+    }
+
+    self.eval = function (expression) {
+      return $scope.$eval(expression);
+    };
+
     self.first = function () {
       self.page = 1;
       self.onPaginationChange();
     };
-    
+
     self.hasNext = function () {
       return self.page * self.limit < self.total;
     };
-    
+
     self.hasPrevious = function () {
       return self.page > 1;
     };
-    
+
     self.last = function () {
       self.page = self.pages();
       self.onPaginationChange();
     };
-    
+
     self.max = function () {
       return self.hasNext() ? self.page * self.limit : self.total;
     };
-    
+
     self.min = function () {
-      return self.page * self.limit - self.limit;
+      return isPositive(self.total) ? self.page * self.limit - self.limit + 1 : 0;
     };
-    
+
     self.next = function () {
       self.page++;
       self.onPaginationChange();
     };
-    
+
     self.onPaginationChange = function () {
       if(angular.isFunction(self.onPaginate)) {
-        self.onPaginate(self.page, self.limit);
+        $mdUtil.nextTick(function () {
+          self.onPaginate(self.page, self.limit);
+        });
       }
     };
-    
+
     self.pages = function () {
-      return Math.ceil(self.total / (isZero(self.limit) ? 1 : self.limit));
+      return isPositive(self.total) ? Math.ceil(self.total / (isPositive(self.limit) ? self.limit : 1)) : 1;
     };
-    
+
     self.previous = function () {
       self.page--;
       self.onPaginationChange();
     };
-    
-    self.range = function (total) {
-      return new Array(isFinite(total) && isPositive(total) ? total : 1);
-    };
-    
+
     self.showBoundaryLinks = function () {
-      if($attrs.hasOwnProperty('mdBoundaryLinks') && $attrs.mdBoundaryLinks === '') {
-        return true;
-      }
-      
-      return self.boundaryLinks;
+      return $attrs.mdBoundaryLinks === '' || self.boundaryLinks;
     };
-    
+
     self.showPageSelect = function () {
-      if($attrs.hasOwnProperty('mdPageSelect') && $attrs.mdPageSelect === '') {
-        return true;
-      }
-      
-      return self.pageSelect;
+      return $attrs.mdPageSelect === '' || self.pageSelect;
     };
-    
+
     $scope.$watch('$pagination.limit', function (newValue, oldValue) {
-      if(newValue === oldValue) {
+      if(isNaN(newValue) || isNaN(oldValue) || newValue === oldValue) {
         return;
       }
-      
+
       // find closest page from previous min
-      self.page = Math.floor(((self.page * oldValue - oldValue) + newValue) / (isZero(newValue) ? 1 : newValue));
+      self.page = Math.floor(((self.page * oldValue - oldValue) + newValue) / (isPositive(newValue) ? newValue : 1));
       self.onPaginationChange();
     });
+
+    $attrs.$observe('mdLabel', function (label) {
+      angular.extend(self.label, defaultLabel, $scope.$eval(label));
+    });
+
+    $scope.$watch('$pagination.total', function (newValue, oldValue) {
+      if(isNaN(newValue) || newValue === oldValue) {
+        return;
+      }
+
+      if(self.page > self.pages()) {
+        self.last();
+      }
+    });
   }
-  
-  Controller.$inject = ['$attrs', '$scope'];
-  
+
+  Controller.$inject = ['$attrs', '$mdUtil', '$scope'];
+
   return {
     bindToController: {
       boundaryLinks: '=?mdBoundaryLinks',
-      label: '@?mdLabel',
+      disabled: '=ngDisabled',
       limit: '=mdLimit',
       page: '=mdPage',
       pageSelect: '=?mdPageSelect',
       onPaginate: '=?mdOnPaginate',
-      options: '=mdOptions',
+      limitOptions: '=?mdLimitOptions',
       total: '@mdTotal'
     },
     compile: compile,
