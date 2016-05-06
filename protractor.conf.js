@@ -4,8 +4,6 @@ exports.config =  {
 
     specs: ['tests/e2e/**/*.js'],
 
-    baseUrl: 'http://localhost:8000',
-
     framework: 'jasmine',
 
     maxSessions: 1,

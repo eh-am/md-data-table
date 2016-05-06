@@ -142,9 +142,27 @@ module.exports = function (grunt) {
     protractor: {
       options: {
         configFile: "protractor.conf.js", // Default config file
-        keepAlive: true
+        keepAlive: true,
       },
-      watch: {}
+      watch: {
+        options: {
+          args: {
+            params: {
+               baseUrl: 'http://localhost:8000',
+            }
+          }
+        }
+      },
+      singleRun: {
+        options: {
+          keepAlive: false,
+          args: {
+            params: {
+               baseUrl: 'http://localhost:8001',
+            }
+          }
+        }
+      }
     },
     // minify javascript files
     uglify: {
@@ -212,7 +230,7 @@ module.exports = function (grunt) {
     grunt.task.run([
       'connect:app',
       'karma:unit',
-      'protractor',
+      'protractor:watch',
       'watch'
     ]);
 
@@ -249,7 +267,7 @@ module.exports = function (grunt) {
   grunt.registerTask('test:e2e', [
     'html2js',
     'connect:test',
-    'protractor',
+    'protractor:singleRun',
   ]);
 
   // run both unit and e2e tests once

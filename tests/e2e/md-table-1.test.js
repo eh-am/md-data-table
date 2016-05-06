@@ -1,7 +1,7 @@
 describe('md-data-table-1', function() {
 
     beforeEach(function (){
-      browser.get(browser.baseUrl);
+      browser.get(browser.params.baseUrl);
       mdDataTable = element(by.id('md-data-table-1'));
     });
 
@@ -69,7 +69,7 @@ describe('md-data-table-1', function() {
             return icon.getAttribute('class');
 
           }).then(function(classes){
-            
+
               var iconClass = classes.replace('ng-isolate-scope', '').trim();
 
               // now we expect arrow position to be the opposite
