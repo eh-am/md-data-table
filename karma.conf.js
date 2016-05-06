@@ -14,11 +14,23 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      // protip: ORDER MATTERS!!!
       "bower_components/angular/angular.js",
-      "bower_components/angular-material-data-table/angular-material.js",
+      "bower_components/angular-animate/angular-animate.js",
+      "bower_components/angular-aria/angular-aria.js",
+      "bower_components/angular-messages/angular-messages.js",
       "bower_components/angular-mocks/angular-mocks.js",
-      'app/md-data-table/**/*.js',
+      "bower_components/angular-moment/angular-moment.js",
+      "bower_components/moment/moment.js",
+      "bower_components/angular-material/angular-material.js",
+
+      "app/md-data-table/md-data-table.js",
+      "app/md-data-table/scripts/*.js",
+
+      'app/app.js',
+      'app/scripts/nutritionController.js',
       '.temp/templates.js',
+
       'tests/unit/**/*.js'
     ],
 
@@ -59,7 +71,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
@@ -68,6 +80,13 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    concurrency: Infinity,
+
+    client: {
+      captureConsole: true,
+      mocha: {
+        bail: true
+      }
+    }
   })
 }

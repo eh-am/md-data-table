@@ -6,6 +6,7 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-karma'); //unit tests
   grunt.loadNpmTasks('grunt-protractor-runner'); //e2e tests
+  grunt.loadNpmTasks('grunt-notify');
 
 
   grunt.initConfig({

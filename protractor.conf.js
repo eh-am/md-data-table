@@ -15,4 +15,8 @@ exports.config =  {
     multiCapabilities: [
         { browserName: 'chrome' }
     ],
+    plugins: [{
+      package: 'protractor-notify-plugin',
+      notifier: 'growl'
+    }],
 };
