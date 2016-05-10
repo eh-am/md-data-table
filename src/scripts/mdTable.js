@@ -50,6 +50,11 @@ function mdTable() {
     self.$$hash = new Hash();
     self.$$columns = {};
 
+    self.isReady = {
+        body: $q.defer(),
+        head: $q.defer()
+    };
+
     function enableRowSelection() {
       self.$$rowSelect = true;
 
@@ -166,6 +171,27 @@ function mdTable() {
         disableRowSelection();
       }
     });
+
+    // All for Editable
+    if (!angular.isArray(self.dirtyItems)) {
+        self.dirtyItems = [];
+        // log warning for developer
+        console.warn('md-row-dirty="' + $attrs.mdRowDirty + '" : ' +
+            $attrs.mdRowDirty + ' is not defined as an array in your controller, ' +
+            'i.e. ' + $attrs.mdRowDirty + ' = [], two-way data binding will fail.');
+    }
+
+    self.isReady.body.promise.then(function (ngRepeat) {
+        if ($attrs.mdRowSelect && ngRepeat) {
+            self.listener = $scope.$parent.$watch(ngRepeat.items, function (newValue, oldeValue) {
+                if (newValue !== oldeValue) {
+                    self.selectedItems.splice(0);
+                    self.dirtyItems.splice(0);
+                }
+            });
+        }
+    });
+
   }
 
   Controller.$inject = ['$attrs', '$element', '$q', '$scope'];

@@ -13,6 +13,8 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
   };
 
   $scope.selected = [];
+  $scope.dirtyItems = [];
+
   $scope.limitOptions = [5, 10, 15, {
     label: 'All',
     value: function () {
@@ -187,8 +189,11 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
     }, 2000);
   };
 
-  $scope.rowUpdateCallback = function(){
-      alert('Update callback called');
-  }
+
+
+    $scope.rowUpdateCallback = function(){
+        alert('Update callback called');
+    }
+
 
 }]);
