@@ -1,0 +1,33 @@
+<md-dialog aria-label="Edit" ng-cloak>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Edit</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <div ng-switch on="editType">
+                    <div ng-switch-when="date">
+                        <md-datepicker ng-model="editModel.data" md-placeholder="Enter date"></md-datepicker>
+                    </div>
+                    <div ng-switch-when="note">
+                        <md-input-container class="md-block">
+                            <textarea ng-model="editModel.data" md-maxlength="{{maxNoteLength}}"></textarea>
+                        </md-input-container>
+                    </div>
+                    <div ng-switch-default>
+                        <md-input-container>
+                            <input ng-model="editModel.data" type="{{editType}}">
+                        </md-input-container>
+                    </div>
+                </div>
+            </div>
+        </md-dialog-content>
+        <div class="md-actions" layout="row">
+            <span flex></span>
+            <md-button ng-click="close()">Cancel</md-button>
+            <md-button ng-click="save()" style="margin-right:20px;">Save</md-button>
+        </div>
+    </form>
+</md-dialog>

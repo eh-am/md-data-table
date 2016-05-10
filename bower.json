@@ -1,6 +1,5 @@
 {
   "name": "angular-material-data-table",
-  "version": "0.10.9",
   "description": "Material Design data table.",
   "main": [
     "dist/md-data-table.js",
@@ -29,7 +28,10 @@
     "Gruntfile.js"
   ],
   "dependencies": {
-    "angular": "^1.4.0",
-    "angular-material": "1.0.x"
+    "angular": "1.4.9",
+    "angular-material": "1.0.0-rc4",
+    "angular-moment":"0.10.3",
+    "angular-animate":"1.4.9",
+    "moment": "2.10.6"
   }
 }

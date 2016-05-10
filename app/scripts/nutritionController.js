@@ -35,27 +35,34 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
     descendFirst: true,
     name: 'Type',
     orderBy: 'type'
+  },{
+    name: 'Date',
+    orderBy: 'date'
   }, {
     name: 'Calories',
     numeric: true,
     orderBy: 'calories.value'
   }, {
+    name: 'Note',
+    orderBy: 'note',
+    trim: true
+  }, {
     name: 'Fat',
     numeric: true,
     orderBy: 'fat.value',
     unit: 'g'
-  }, /* {
+  },  {
     name: 'Carbs',
     numeric: true,
     orderBy: 'carbs.value',
     unit: 'g'
-  }, */ {
+  },  {
     name: 'Protein',
     numeric: true,
     orderBy: 'protein.value',
     trim: true,
     unit: 'g'
-  }, /* {
+  },  {
     name: 'Sodium',
     numeric: true,
     orderBy: 'sodium.value',
@@ -65,15 +72,15 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
     numeric: true,
     orderBy: 'calcium.value',
     unit: '%'
-  }, */ {
+  },  {
     name: 'Iron',
     numeric: true,
     orderBy: 'iron.value',
     unit: '%'
-  }, {
+  },/* {
     name: 'Comments',
     orderBy: 'comment'
-  }];
+  } */];
 
   $http.get('desserts.json').then(function (desserts) {
     $scope.desserts = desserts.data;
@@ -179,5 +186,9 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
 
     }, 2000);
   };
+
+  $scope.rowUpdateCallback = function(){
+      alert('Update callback called');
+  }
 
 }]);

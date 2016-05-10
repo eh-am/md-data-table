@@ -2,12 +2,49 @@
  * Angular Material Data Table
  * https://github.com/daniel-nagy/md-data-table
  * @license MIT
- * v0.10.9
+ * vundefined
  */
 (function (window, angular, undefined) {
 'use strict';
 
-angular.module('md.table.templates', ['md-table-pagination.html', 'md-table-progress.html', 'arrow-up.svg', 'navigate-before.svg', 'navigate-first.svg', 'navigate-last.svg', 'navigate-next.svg']);
+angular.module('md.table.templates', ['md-data-table-edit.html', 'md-table-pagination.html', 'md-table-progress.html', 'arrow-up.svg', 'navigate-before.svg', 'navigate-first.svg', 'navigate-last.svg', 'navigate-next.svg']);
+
+angular.module('md-data-table-edit.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('md-data-table-edit.html',
+    '<md-dialog aria-label="Edit" ng-cloak>\n' +
+    '    <form>\n' +
+    '        <md-toolbar>\n' +
+    '            <div class="md-toolbar-tools">\n' +
+    '                <h2>Edit</h2>\n' +
+    '            </div>\n' +
+    '        </md-toolbar>\n' +
+    '        <md-dialog-content>\n' +
+    '            <div class="md-dialog-content">\n' +
+    '                <div ng-switch on="editType">\n' +
+    '                    <div ng-switch-when="date">\n' +
+    '                        <md-datepicker ng-model="editModel.data" md-placeholder="Enter date"></md-datepicker>\n' +
+    '                    </div>\n' +
+    '                    <div ng-switch-when="note">\n' +
+    '                        <md-input-container class="md-block">\n' +
+    '                            <textarea ng-model="editModel.data" md-maxlength="{{maxNoteLength}}"></textarea>\n' +
+    '                        </md-input-container>\n' +
+    '                    </div>\n' +
+    '                    <div ng-switch-default>\n' +
+    '                        <md-input-container>\n' +
+    '                            <input ng-model="editModel.data" type="{{editType}}">\n' +
+    '                        </md-input-container>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '            </div>\n' +
+    '        </md-dialog-content>\n' +
+    '        <div class="md-actions" layout="row">\n' +
+    '            <span flex></span>\n' +
+    '            <md-button ng-click="close()">Cancel</md-button>\n' +
+    '            <md-button ng-click="save()" style="margin-right:20px;">Save</md-button>\n' +
+    '        </div>\n' +
+    '    </form>\n' +
+    '</md-dialog>');
+}]);
 
 angular.module('md-table-pagination.html', []).run(['$templateCache', function($templateCache) {
   $templateCache.put('md-table-pagination.html',
@@ -689,6 +726,92 @@ function mdEditDialog($compile, $controller, $document, $mdUtil, $q, $rootScope,
 mdEditDialog.$inject = ['$compile', '$controller', '$document', '$mdUtil', '$q', '$rootScope', '$templateCache', '$templateRequest', '$window'];
 
 
+angular.module('md.data.table')
+    .controller('EditDialogController', mdEditableDialogController)
+    .directive('mdEditable', mdEditable);
+
+function mdEditableDialogController($scope, $mdDialog, editType, maxNoteLength, dateFormat, data, moment) {
+    'use strict';
+
+    $scope.editType = editType;
+    $scope.maxNoteLength = maxNoteLength;
+
+    $scope.editModel = {};
+
+    if (editType === 'date' && data && !(data instanceof Date)) {
+        $scope.editModel.data = moment(data, dateFormat).toDate();
+    }
+    else {
+        $scope.editModel.data = data;
+    }
+
+    $scope.close = function () {
+        $mdDialog.hide();
+    };
+
+    $scope.save = function () {
+        $mdDialog.hide({
+            data: $scope.editModel.data
+        });
+    };
+}
+
+function mdEditable($mdDialog,moment) {
+    'use strict';
+
+    function link(scope, element, attrs, tableCtrl) {
+
+        element.on('click', function (event) {
+            event.stopPropagation();
+
+            var type = attrs.mdEditable;
+
+            $mdDialog.show({
+                    controller: 'EditDialogController',
+                    locals: {
+                        editType: type,
+                        dateFormat: scope.dateFormat,
+                        maxNoteLength: scope.maxNoteLength,
+                        data: scope.data
+                    },
+                    templateUrl: 'md-data-table-edit.html',
+                    parent: angular.element(document.body),
+                    targetEvent: event,
+                    clickOutsideToClose: true
+                })
+                .then(function (object) {
+                    if (object && object.data) {
+                        if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
+                            scope.data = moment(object.data).format(scope.dateFormat);
+                        }
+                        else {
+                            scope.data = object.data;
+                        }
+
+                        if(typeof tableCtrl.rowUpdateCallback === 'function') {
+                            tableCtrl.rowUpdateCallback();
+                        }
+                    }
+                }, function () {
+                    console.log('Error hiding edit dialog.');
+                });
+        });
+
+    }
+
+    return {
+        link: link,
+        require: '^^mdTable',
+        restrict: 'A',
+        scope: {
+            data: '=',
+            dateFormat: '@',
+            maxNoteLength: '@'
+        }
+    };
+}
+
+
 angular.module('md.data.table').directive('mdFoot', mdFoot);
 
 function mdFoot() {
@@ -1098,7 +1221,7 @@ angular.module('md.data.table').directive('mdTable', mdTable);
 
 function Hash() {
   var keys = {};
-  
+
   this.equals = function (key, item) {
     return keys[key] === item;
   };
@@ -1106,7 +1229,7 @@ function Hash() {
   this.get = function (key) {
     return keys[key];
   };
-  
+
   this.has = function (key) {
     return keys.hasOwnProperty(key);
   };
@@ -1114,145 +1237,145 @@ function Hash() {
   this.purge = function (key) {
     delete keys[key];
   };
-  
+
   this.update = function (key, item) {
     keys[key] = item;
   };
 }
 
 function mdTable() {
-  
+
   function compile(tElement, tAttrs) {
     tElement.addClass('md-table');
-    
+
     if(tAttrs.hasOwnProperty('mdProgress')) {
       var body = tElement.find('tbody')[0];
       var progress = angular.element('<thead class="md-table-progress">');
-      
+
       if(body) {
         tElement[0].insertBefore(progress[0], body);
       }
     }
   }
-  
+
   function Controller($attrs, $element, $q, $scope) {
     var self = this;
     var queue = [];
     var watchListener;
     var modelChangeListeners = [];
-    
+
     self.$$hash = new Hash();
     self.$$columns = {};
-    
+
     function enableRowSelection() {
       self.$$rowSelect = true;
-      
+
       watchListener = $scope.$watchCollection('$mdTable.selected', function (selected) {
         modelChangeListeners.forEach(function (listener) {
           listener(selected);
         });
       });
-      
+
       $element.addClass('md-row-select');
     }
-    
+
     function disableRowSelection() {
       self.$$rowSelect = false;
-      
+
       if(angular.isFunction(watchListener)) {
         watchListener();
       }
-      
+
       $element.removeClass('md-row-select');
     }
-    
+
     function resolvePromises() {
       if(!queue.length) {
         return $scope.$applyAsync();
       }
-      
+
       queue[0]['finally'](function () {
         queue.shift();
         resolvePromises();
       });
     }
-    
+
     function rowSelect() {
       return $attrs.mdRowSelect === '' || self.rowSelect;
     }
-    
+
     function validateModel() {
       if(!self.selected) {
         return console.error('Row selection: ngModel is not defined.');
       }
-      
+
       if(!angular.isArray(self.selected)) {
         return console.error('Row selection: Expected an array. Recived ' + typeof self.selected + '.');
       }
-      
+
       return true;
     }
-    
+
     self.columnCount = function () {
       return self.getRows($element[0]).reduce(function (count, row) {
         return row.cells.length > count ? row.cells.length : count;
       }, 0);
     };
-    
+
     self.getRows = function (element) {
       return Array.prototype.filter.call(element.rows, function (row) {
         return !row.classList.contains('ng-leave');
       });
     };
-    
+
     self.getBodyRows = function () {
       return Array.prototype.reduce.call($element.prop('tBodies'), function (result, tbody) {
         return result.concat(self.getRows(tbody));
       }, []);
     };
-    
+
     self.getElement = function () {
       return $element;
     };
-    
+
     self.getHeaderRows = function () {
       return self.getRows($element.prop('tHead'));
     };
-    
+
     self.enableMultiSelect = function () {
       return $attrs.multiple === '' || $scope.$eval($attrs.multiple);
     };
-    
+
     self.waitingOnPromise = function () {
       return !!queue.length;
     };
-    
+
     self.queuePromise = function (promise) {
       if(!promise) {
         return;
       }
-      
+
       if(queue.push(angular.isArray(promise) ? $q.all(promise) : $q.when(promise)) === 1) {
         resolvePromises();
       }
     };
-    
+
     self.registerModelChangeListener = function (listener) {
       modelChangeListeners.push(listener);
     };
-    
+
     self.removeModelChangeListener = function (listener) {
       var index = modelChangeListeners.indexOf(listener);
-      
+
       if(index !== -1) {
         modelChangeListeners.splice(index, 1);
       }
     };
-    
+
     if($attrs.hasOwnProperty('mdProgress')) {
       $scope.$watch('$mdTable.progress', self.queuePromise);
     }
-    
+
     $scope.$watch(rowSelect, function (enable) {
       if(enable && !!validateModel()) {
         enableRowSelection();
@@ -1261,9 +1384,9 @@ function mdTable() {
       }
     });
   }
-  
+
   Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
-  
+
   return {
     bindToController: true,
     compile: compile,
@@ -1273,10 +1396,13 @@ function mdTable() {
     scope: {
       progress: '=?mdProgress',
       selected: '=ngModel',
-      rowSelect: '=mdRowSelect'
+      rowSelect: '=mdRowSelect',
+      // not sure
+      rowUpdateCallback: '&mdRowUpdateCallback'
     }
   };
 }
+
 
 angular.module('md.data.table').directive('mdTablePagination', mdTablePagination);
 
