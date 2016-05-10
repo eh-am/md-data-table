@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/daniel-nagy/md-data-table.git"
+    "url": "git://github.com/TranslucentComputing/md-data-table.git"
   },
   "main": "index.js",
   "devDependencies": {

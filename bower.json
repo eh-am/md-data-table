@@ -8,12 +8,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/daniel-nagy/md-data-table.git"
+    "url": "git://github.com/TranslucentComputing/md-data-table.git"
   },
   "authors": [
     "Daniel Nagy"
   ],
-  "homepage": "http://danielnagy.me/md-data-table",
+  "homepage": "http://github.com/TranslucentComputing/md-data-table",
   "license": "MIT",
   "keywords": [
     "material",
@@ -30,6 +30,6 @@
   ],
   "dependencies": {
     "angular": "^1.4.0",
-    "angular-material": "^1.0.0"
+    "angular-material": "1.0.x"
   }
 }
