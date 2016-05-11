@@ -967,11 +967,11 @@ function mdEditable($mdDialog, moment, $mdTable) {
         element.on('click', function (event) {
             event.stopPropagation();
 
-            if(tableCtrl.hasAccess === 'false'){
+            if (tableCtrl.hasAccess === 'false') {
                 return;
             }
 
-            if(scope.mdEditableDisabled === 'true'){
+            if (scope.mdEditableDisabled === 'true') {
                 return;
             }
 
@@ -979,7 +979,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
             var row = element.parent();
 
             //check if the record was disabled
-            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
+            if (scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
                 return;
             }
 
@@ -989,7 +989,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
             //get row record
             var rowData = scope.rowData;
             var oldData;
-            if(angular.isObject(scope.data)) {
+            if (angular.isObject(scope.data)) {
                 oldData = {};
                 angular.copy(scope.data, oldData);
             }
@@ -1014,19 +1014,21 @@ function mdEditable($mdDialog, moment, $mdTable) {
                     clickOutsideToClose: true
                 })
                 .then(function (object) {
-                    //if (object && object.data) {
-                    if (object.data === null) {
-                        scope.data = null;
-                    } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
-                        scope.data = moment(object.data).format(scope.dateFormat);
-                    } else {
-                        scope.data = object.data;
+                    if (angular.isUndefined(object)) // the dialog was canceled
+                        return;
+                    if (true || object.data) { // disabled the incorrect check here to be able to save null
+                        if (object.data === null) {
+                            scope.data = null;
+                        } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
+                            scope.data = moment(object.data).format(scope.dateFormat);
+                        } else {
+                            scope.data = object.data;
+                        }
+                        tableCtrl.processEdit(rowData, attrs.data, scope.data, function (oldItem) { //error callback
+                            scope.rowData = oldItem; //revert the object
+                            scope.data = oldData; //revert the property data
+                        });
                     }
-                    tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
-                        scope.rowData = oldItem; //revert the object
-                        scope.data = oldData; //revert the property data
-                    });
-                    //}
                 }, function () {
                     console.log('Error hiding edit dialog.');
                 });
