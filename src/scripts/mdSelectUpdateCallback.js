@@ -9,7 +9,7 @@ function mdSelectUpdateCallback($mdTable) {
 
     return {
         restrict: 'A',
-        require: '^^mdDataTable',
+        require: '^^mdTable',
         link: function (scope, element, attrs, tableCtrl) {
 
             scope.enableOnChange = false;
@@ -20,19 +20,9 @@ function mdSelectUpdateCallback($mdTable) {
                 if (scope.enableOnChange && newValue !== undefined) {
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 
-                    //remove duplicates
-                    $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
-
-                    //update dirty items
-                    tableCtrl.dirtyItems.push({
-                        oldItem: oldItem,
-                        newItem: rowData
+                    tableCtrl.processEditSelect(rowData,oldItem,function () { //error callback
+                        angular.copy(oldItem,scope[attrs.ngModel.split('.')[0]]);
                     });
-
-                    //call callback
-                    if (typeof tableCtrl.rowUpdateCallback === 'function') {
-                        tableCtrl.rowUpdateCallback();
-                    }
                 }
             });
 
@@ -42,7 +32,7 @@ function mdSelectUpdateCallback($mdTable) {
                     scope.enableOnChange = true;
                 }
 
-                angular.copy(scope[attrs.ngModel.split('.')[0]],oldItem);
+                angular.copy(scope[attrs.ngModel.split('.')[0]], oldItem);
             });
         }
     };

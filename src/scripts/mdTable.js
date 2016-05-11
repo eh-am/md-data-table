@@ -39,16 +39,24 @@ function mdTable() {
         tElement[0].insertBefore(progress[0], body);
       }
     }
+
+
+    var rows = tElement.find('tbody').find('tr');
+    rows.attr('md-select-row', ''); //always add this attribute, use other attributes to control this directive
+
   }
 
-  function Controller($attrs, $element, $q, $scope) {
+  function Controller($attrs, $element, $q, $scope, $mdTable) {
     var self = this;
     var queue = [];
     var watchListener;
     var modelChangeListeners = [];
 
+
     self.$$hash = new Hash();
     self.$$columns = {};
+
+    self._rowUpdateCallback = $scope.$mdTable.rowUpdateCallback;
 
     self.isReady = {
         body: $q.defer(),
@@ -192,9 +200,71 @@ function mdTable() {
         }
     });
 
+
+
+    self.processEdit = function (rowData, propertyPath, propertyData, onError) {
+        //remove duplicates
+        $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+        var oldItem = {};
+
+        angular.copy(rowData, oldItem);
+
+        //sync data
+        $mdTable.updateObject(rowData, propertyPath, propertyData);
+
+        //update dirty items
+        self.dirtyItems.push({
+            oldItem: oldItem,
+            newItem: rowData
+        });
+
+
+
+        if (typeof self.rowUpdateCallback === 'function') {
+            //execute the callback for each row
+            var i = self.dirtyItems.length;
+            while (i--) {
+                var item = self.dirtyItems[i];
+
+                (item, function () { //error callback
+                    onError(item.oldItem);
+                });
+
+                self.dirtyItems.splice(i, 1); //remove the item from array
+            }
+        }
+    };
+
+    self.processEditSelect = function (rowData,oldItem,onError) {
+        //remove duplicates
+        $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+        //update dirty items
+        self.dirtyItems.push({
+            oldItem: oldItem,
+            newItem: rowData
+        });
+
+        console.log('self.rowUpdateCallback', self.rowUpdateCallback);
+        //call callback
+        if (typeof self.rowUpdateCallback === 'function') {
+            //execute the callback for each row
+            var i = self.dirtyItems.length;
+            while (i--) {
+                var item = self.dirtyItems[i];
+
+                self.rowUpdateCallback()(item, function () { //error callback
+                    onError();
+                });
+
+                self.dirtyItems.splice(i, 1); //remove the item from array
+            }
+        }
+    };
   }
 
-  Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
+  Controller.$inject = ['$attrs', '$element', '$q', '$scope', '$mdTable'];
 
   return {
     bindToController: true,
@@ -207,7 +277,8 @@ function mdTable() {
       selected: '=ngModel',
       rowSelect: '=mdRowSelect',
       // not sure
-      rowUpdateCallback: '&mdRowUpdateCallback'
+      rowUpdateCallback: '&mdRowUpdateCallback',
+      rowClick: '=mdRowClick'
     }
   };
 }

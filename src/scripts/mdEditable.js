@@ -71,6 +71,14 @@ function mdEditable($mdDialog, moment, $mdTable) {
 
             //get row record
             var rowData = scope.rowData;
+            var oldData;
+            if(angular.isObject(scope.data)) {
+                oldData = {};
+                angular.copy(scope.data, oldData);
+            }
+            else {
+                oldData = scope.data;
+            }
 
             $mdDialog.show({
                     controller: 'EditDialogController',
@@ -97,26 +105,10 @@ function mdEditable($mdDialog, moment, $mdTable) {
                             scope.data = object.data;
                         }
 
-                        //remove duplicates
-                        $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
-
-                        var oldItem = {};
-
-                        angular.copy(rowData,oldItem);
-
-                        //sync data
-                        $mdTable.updateObject(rowData, attrs.data, scope.data);
-
-                        //update dirty items
-                        tableCtrl.dirtyItems.push({
-                            oldItem:oldItem,
-                            newItem:rowData
+                        tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
+                            scope.rowData = oldItem; //revert the object
+                            scope.data = oldData; //revert the property data
                         });
-
-                        //call callback
-                        if (typeof tableCtrl.rowUpdateCallback === 'function') {
-                            tableCtrl.rowUpdateCallback();
-                        }
                     }
                 }, function () {
                     console.log('Error hiding edit dialog.');

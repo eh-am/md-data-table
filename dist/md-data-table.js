@@ -980,6 +980,14 @@ function mdEditable($mdDialog, moment, $mdTable) {
 
             //get row record
             var rowData = scope.rowData;
+            var oldData;
+            if(angular.isObject(scope.data)) {
+                oldData = {};
+                angular.copy(scope.data, oldData);
+            }
+            else {
+                oldData = scope.data;
+            }
 
             $mdDialog.show({
                     controller: 'EditDialogController',
@@ -1006,26 +1014,10 @@ function mdEditable($mdDialog, moment, $mdTable) {
                             scope.data = object.data;
                         }
 
-                        //remove duplicates
-                        $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
-
-                        var oldItem = {};
-
-                        angular.copy(rowData,oldItem);
-
-                        //sync data
-                        $mdTable.updateObject(rowData, attrs.data, scope.data);
-
-                        //update dirty items
-                        tableCtrl.dirtyItems.push({
-                            oldItem:oldItem,
-                            newItem:rowData
+                        tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
+                            scope.rowData = oldItem; //revert the object
+                            scope.data = oldData; //revert the property data
                         });
-
-                        //call callback
-                        if (typeof tableCtrl.rowUpdateCallback === 'function') {
-                            tableCtrl.rowUpdateCallback();
-                        }
                     }
                 }, function () {
                     console.log('Error hiding edit dialog.');
@@ -1469,7 +1461,7 @@ function mdSelectUpdateCallback($mdTable) {
 
     return {
         restrict: 'A',
-        require: '^^mdDataTable',
+        require: '^^mdTable',
         link: function (scope, element, attrs, tableCtrl) {
 
             scope.enableOnChange = false;
@@ -1480,19 +1472,9 @@ function mdSelectUpdateCallback($mdTable) {
                 if (scope.enableOnChange && newValue !== undefined) {
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 
-                    //remove duplicates
-                    $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
-
-                    //update dirty items
-                    tableCtrl.dirtyItems.push({
-                        oldItem: oldItem,
-                        newItem: rowData
+                    tableCtrl.processEditSelect(rowData,oldItem,function () { //error callback
+                        angular.copy(oldItem,scope[attrs.ngModel.split('.')[0]]);
                     });
-
-                    //call callback
-                    if (typeof tableCtrl.rowUpdateCallback === 'function') {
-                        tableCtrl.rowUpdateCallback();
-                    }
                 }
             });
 
@@ -1502,13 +1484,14 @@ function mdSelectUpdateCallback($mdTable) {
                     scope.enableOnChange = true;
                 }
 
-                angular.copy(scope[attrs.ngModel.split('.')[0]],oldItem);
+                angular.copy(scope[attrs.ngModel.split('.')[0]], oldItem);
             });
         }
     };
 }
 
 mdSelectUpdateCallback.$inject = ['$mdTable'];
+
 
 angular.module('md.data.table').directive('mdTable', mdTable);
 
@@ -1549,16 +1532,24 @@ function mdTable() {
         tElement[0].insertBefore(progress[0], body);
       }
     }
+
+
+    var rows = tElement.find('tbody').find('tr');
+    rows.attr('md-select-row', ''); //always add this attribute, use other attributes to control this directive
+
   }
 
-  function Controller($attrs, $element, $q, $scope) {
+  function Controller($attrs, $element, $q, $scope, $mdTable) {
     var self = this;
     var queue = [];
     var watchListener;
     var modelChangeListeners = [];
 
+
     self.$$hash = new Hash();
     self.$$columns = {};
+
+    self._rowUpdateCallback = $scope.$mdTable.rowUpdateCallback;
 
     self.isReady = {
         body: $q.defer(),
@@ -1702,9 +1693,71 @@ function mdTable() {
         }
     });
 
+
+
+    self.processEdit = function (rowData, propertyPath, propertyData, onError) {
+        //remove duplicates
+        $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+        var oldItem = {};
+
+        angular.copy(rowData, oldItem);
+
+        //sync data
+        $mdTable.updateObject(rowData, propertyPath, propertyData);
+
+        //update dirty items
+        self.dirtyItems.push({
+            oldItem: oldItem,
+            newItem: rowData
+        });
+
+
+
+        if (typeof self.rowUpdateCallback === 'function') {
+            //execute the callback for each row
+            var i = self.dirtyItems.length;
+            while (i--) {
+                var item = self.dirtyItems[i];
+
+                (item, function () { //error callback
+                    onError(item.oldItem);
+                });
+
+                self.dirtyItems.splice(i, 1); //remove the item from array
+            }
+        }
+    };
+
+    self.processEditSelect = function (rowData,oldItem,onError) {
+        //remove duplicates
+        $mdTable.removeDuplicates(self.dirtyItems, rowData.id);
+
+        //update dirty items
+        self.dirtyItems.push({
+            oldItem: oldItem,
+            newItem: rowData
+        });
+
+        console.log('self.rowUpdateCallback', self.rowUpdateCallback);
+        //call callback
+        if (typeof self.rowUpdateCallback === 'function') {
+            //execute the callback for each row
+            var i = self.dirtyItems.length;
+            while (i--) {
+                var item = self.dirtyItems[i];
+
+                self.rowUpdateCallback()(item, function () { //error callback
+                    onError();
+                });
+
+                self.dirtyItems.splice(i, 1); //remove the item from array
+            }
+        }
+    };
   }
 
-  Controller.$inject = ['$attrs', '$element', '$q', '$scope'];
+  Controller.$inject = ['$attrs', '$element', '$q', '$scope', '$mdTable'];
 
   return {
     bindToController: true,
@@ -1717,7 +1770,8 @@ function mdTable() {
       selected: '=ngModel',
       rowSelect: '=mdRowSelect',
       // not sure
-      rowUpdateCallback: '&mdRowUpdateCallback'
+      rowUpdateCallback: '&mdRowUpdateCallback',
+      rowClick: '=mdRowClick'
     }
   };
 }
