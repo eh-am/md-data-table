@@ -2,7 +2,7 @@
  * Angular Material Data Table
  * https://github.com/daniel-nagy/md-data-table
  * @license MIT
- * vundefined
+ * v0.10.9
  */
 (function (window, angular, undefined) {
 'use strict';
@@ -971,7 +971,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
                 return;
             }
 
-            if(scope.mdEditableDisabled == 'false'){
+            if(scope.mdEditableDisabled === 'true'){
                 return;
             }
 
