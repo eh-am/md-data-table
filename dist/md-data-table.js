@@ -516,7 +516,6 @@ function mdTableService() {
         updateObject: setDeepValue
     };
 
-<<<<<<< HEAD
 }
 
 angular.module('md.data.table')
@@ -535,25 +534,6 @@ function controllerDecorator($delegate) {
       var create = $delegate(expression, locals, true, ident);
       angular.extend(create.instance, later);
       return create();
-=======
-}
-
-angular.module('md.data.table')
-    .controller('EditDialogController', mdEditableDialogController)
-    .directive('mdEditable', mdEditable);
-
-function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength, fieldRequired, dateFormat, fieldMaxDate, fieldMinDate, data, moment) {
-    'use strict';
-
-    $scope.editModel = {};
-
-    $scope.fieldRequired = fieldRequired || false;
-    $scope.editType = editType;
-    $scope.fieldMaxLength = fieldMaxLength;
-
-    if (fieldMinDate && (fieldMinDate instanceof Date)) {
-        $scope.fieldMinDate = fieldMinDate;
->>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
     }
     return $delegate(expression, locals, later, ident);
   };
@@ -616,36 +596,9 @@ function mdEditDialog($compile, $controller, $document, $mdUtil, $q, $rootScope,
         element.remove();
       });
     }
-<<<<<<< HEAD
     
     if(options.escToClose) {
       escToClose(element);
-=======
-
-    $scope.close = function () {
-        $mdDialog.hide();
-    };
-
-    $scope.save = function () {
-        $mdDialog.hide({
-            data: $scope.editModel.data
-        });
-    };
-}
-
-function mdEditable($mdDialog, moment, $mdTable) {
-    'use strict';
-
-    function compile(tElement, tAttrs) {
-        //find the row
-        var row = tElement.parent();
-        var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
-
-        //add data item attribute
-        tAttrs.$set('rowData', ngRepeat.item);
-
-        return link;
->>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
     }
     
     element.on('$destroy', function () {
@@ -749,7 +702,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
     });
   }
 
-<<<<<<< HEAD
   function focusOnOpen(element) {
     $mdUtil.nextTick(function () {
       var autofocus = $mdUtil.findFocusTarget(element);
@@ -759,30 +711,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
       }
     }, false);
   }
-=======
-    function link(scope, element, attrs, tableCtrl) {
-        element.on('click', function (event) {
-            event.stopPropagation();
-
-            if (tableCtrl.hasAccess === 'false') {
-                return;
-            }
-
-            if (scope.mdEditableDisabled === 'true') {
-                return;
-            }
-
-            //find the row
-            var row = element.parent();
-
-            //check if the record was disabled
-            if (scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
-                return;
-            }
-
-            //get type of edit field
-            var type = attrs.mdEditable;
->>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
 
   function positionDialog(element, target) {
     var table = angular.element(target).controller('mdCell').getTable();
@@ -992,7 +920,6 @@ function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength,
     $scope.editType = editType;
     $scope.fieldMaxLength = fieldMaxLength;
 
-
     if (fieldMinDate && (fieldMinDate instanceof Date)) {
         $scope.fieldMinDate = fieldMinDate;
     }
@@ -1013,9 +940,35 @@ function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength,
     };
 
     $scope.save = function () {
-        $mdDialog.hide({
-            data: $scope.editModel.data
-        });
+        //console.log('scope editType is', $scope.editType);
+        var $form, inputText, inputValue;
+
+        $form = angular.element('form[name="inlineEditForm"]');
+        // I was going this way but then saw that our workaround is necessary only for mdDatepicker
+        //switch ($scope.editType) {
+        //    case 'text':
+        //    case 'number':
+        //    case 'email':
+        //        inputValue = $form.find('input').val();
+        //        break;
+        //    case 'note':
+        //        inputValue = $form.find('textarea').val();
+        //        break;
+        //    case 'date':
+        //        inputText = $form.find('input').val();
+        //        inputValue = moment(inputText, $scope.dateFormat).toDate();
+        //        break;
+        //}
+
+        if ($scope.editType === 'date') {
+            inputText = $form.find('input').val();
+            inputValue = moment(inputText, $scope.dateFormat).toDate();
+            //console.log('hiding inline edit with', inputValue)
+            $mdDialog.hide({data: inputValue});
+        } else {
+            //console.log('hiding inline edit with', $scope.editModel.data)
+            $mdDialog.hide({data: $scope.editModel.data});
+        }
     };
 }
 
@@ -1023,7 +976,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
     'use strict';
 
     function compile(tElement, tAttrs) {
-
         //find the row
         var row = tElement.parent();
         var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
@@ -1035,7 +987,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
     }
 
     function link(scope, element, attrs, tableCtrl) {
-
         element.on('click', function (event) {
             event.stopPropagation();
 
