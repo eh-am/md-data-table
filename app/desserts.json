@@ -3,7 +3,7 @@
   "data": [
     {
       "id": "1",
-      "name": "Frozen yogurt",
+      "name": "",
       "type": "Ice cream",
       "date": "2015-01-01",
       "calories": { "value": 159.0 },
