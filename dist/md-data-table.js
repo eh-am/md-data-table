@@ -1014,19 +1014,19 @@ function mdEditable($mdDialog, moment, $mdTable) {
                     clickOutsideToClose: true
                 })
                 .then(function (object) {
-                    if (object && object.data) {
-                        if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
-                            scope.data = moment(object.data).format(scope.dateFormat);
-                        }
-                        else {
-                            scope.data = object.data;
-                        }
-
-                        tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
-                            scope.rowData = oldItem; //revert the object
-                            scope.data = oldData; //revert the property data
-                        });
+                    //if (object && object.data) {
+                    if (object.data === null) {
+                        scope.data = null;
+                    } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
+                        scope.data = moment(object.data).format(scope.dateFormat);
+                    } else {
+                        scope.data = object.data;
                     }
+                    tableCtrl.processEdit(rowData,attrs.data,scope.data,function(oldItem){ //error callback
+                        scope.rowData = oldItem; //revert the object
+                        scope.data = oldData; //revert the property data
+                    });
+                    //}
                 }, function () {
                     console.log('Error hiding edit dialog.');
                 });
@@ -1479,6 +1479,9 @@ function mdSelectUpdateCallback() {
 
             scope.$watch(attrs.ngModel, function (newValue) {
                 if (scope.enableOnChange && newValue !== undefined) {
+
+                    scope.enableOnChange = false;
+
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 
                     tableCtrl.processEditSelect(rowData,oldItem,function () { //error callback
