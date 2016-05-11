@@ -516,6 +516,7 @@ function mdTableService() {
         updateObject: setDeepValue
     };
 
+<<<<<<< HEAD
 }
 
 angular.module('md.data.table')
@@ -534,6 +535,25 @@ function controllerDecorator($delegate) {
       var create = $delegate(expression, locals, true, ident);
       angular.extend(create.instance, later);
       return create();
+=======
+}
+
+angular.module('md.data.table')
+    .controller('EditDialogController', mdEditableDialogController)
+    .directive('mdEditable', mdEditable);
+
+function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength, fieldRequired, dateFormat, fieldMaxDate, fieldMinDate, data, moment) {
+    'use strict';
+
+    $scope.editModel = {};
+
+    $scope.fieldRequired = fieldRequired || false;
+    $scope.editType = editType;
+    $scope.fieldMaxLength = fieldMaxLength;
+
+    if (fieldMinDate && (fieldMinDate instanceof Date)) {
+        $scope.fieldMinDate = fieldMinDate;
+>>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
     }
     return $delegate(expression, locals, later, ident);
   };
@@ -596,9 +616,36 @@ function mdEditDialog($compile, $controller, $document, $mdUtil, $q, $rootScope,
         element.remove();
       });
     }
+<<<<<<< HEAD
     
     if(options.escToClose) {
       escToClose(element);
+=======
+
+    $scope.close = function () {
+        $mdDialog.hide();
+    };
+
+    $scope.save = function () {
+        $mdDialog.hide({
+            data: $scope.editModel.data
+        });
+    };
+}
+
+function mdEditable($mdDialog, moment, $mdTable) {
+    'use strict';
+
+    function compile(tElement, tAttrs) {
+        //find the row
+        var row = tElement.parent();
+        var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
+
+        //add data item attribute
+        tAttrs.$set('rowData', ngRepeat.item);
+
+        return link;
+>>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
     }
     
     element.on('$destroy', function () {
@@ -702,6 +749,7 @@ function mdEditDialog($compile, $controller, $document, $mdUtil, $q, $rootScope,
     });
   }
 
+<<<<<<< HEAD
   function focusOnOpen(element) {
     $mdUtil.nextTick(function () {
       var autofocus = $mdUtil.findFocusTarget(element);
@@ -711,6 +759,30 @@ function mdEditDialog($compile, $controller, $document, $mdUtil, $q, $rootScope,
       }
     }, false);
   }
+=======
+    function link(scope, element, attrs, tableCtrl) {
+        element.on('click', function (event) {
+            event.stopPropagation();
+
+            if (tableCtrl.hasAccess === 'false') {
+                return;
+            }
+
+            if (scope.mdEditableDisabled === 'true') {
+                return;
+            }
+
+            //find the row
+            var row = element.parent();
+
+            //check if the record was disabled
+            if (scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
+                return;
+            }
+
+            //get type of edit field
+            var type = attrs.mdEditable;
+>>>>>>> 02f7d2f153b688882eac7165a6ca371a6dae03b4
 
   function positionDialog(element, target) {
     var table = angular.element(target).controller('mdCell').getTable();
@@ -1016,19 +1088,11 @@ function mdEditable($mdDialog, moment, $mdTable) {
                 .then(function (object) {
                     if (angular.isUndefined(object)) // the dialog was canceled
                         return;
-                    if (true || object.data) { // disabled the incorrect check here to be able to save null
-                        if (object.data === null) {
-                            scope.data = null;
-                        } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
-                            scope.data = moment(object.data).format(scope.dateFormat);
-                        } else {
-                            scope.data = object.data;
-                        }
-                        tableCtrl.processEdit(rowData, attrs.data, scope.data, function (oldItem) { //error callback
-                            scope.rowData = oldItem; //revert the object
-                            scope.data = oldData; //revert the property data
-                        });
-                    }
+                    scope.data = object.data;
+                    tableCtrl.processEdit(rowData, attrs.data, scope.data, function (oldItem) { //error callback
+                        scope.rowData = oldItem; //revert the object
+                        scope.data = oldData; //revert the property data
+                    });
                 }, function () {
                     console.log('Error hiding edit dialog.');
                 });

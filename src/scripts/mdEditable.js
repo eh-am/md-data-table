@@ -11,7 +11,6 @@ function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength,
     $scope.editType = editType;
     $scope.fieldMaxLength = fieldMaxLength;
 
-
     if (fieldMinDate && (fieldMinDate instanceof Date)) {
         $scope.fieldMinDate = fieldMinDate;
     }
@@ -42,7 +41,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
     'use strict';
 
     function compile(tElement, tAttrs) {
-
         //find the row
         var row = tElement.parent();
         var ngRepeat = $mdTable.parse($mdTable.getAttr(row, 'ngRepeat'));
@@ -54,7 +52,6 @@ function mdEditable($mdDialog, moment, $mdTable) {
     }
 
     function link(scope, element, attrs, tableCtrl) {
-
         element.on('click', function (event) {
             event.stopPropagation();
 
@@ -107,19 +104,11 @@ function mdEditable($mdDialog, moment, $mdTable) {
                 .then(function (object) {
                     if (angular.isUndefined(object)) // the dialog was canceled
                         return;
-                    if (true || object.data) { // disabled the incorrect check here to be able to save null
-                        if (object.data === null) {
-                            scope.data = null;
-                        } else if (type === 'date' && scope.data && !(scope.data instanceof Date)) {
-                            scope.data = moment(object.data).format(scope.dateFormat);
-                        } else {
-                            scope.data = object.data;
-                        }
-                        tableCtrl.processEdit(rowData, attrs.data, scope.data, function (oldItem) { //error callback
-                            scope.rowData = oldItem; //revert the object
-                            scope.data = oldData; //revert the property data
-                        });
-                    }
+                    scope.data = object.data;
+                    tableCtrl.processEdit(rowData, attrs.data, scope.data, function (oldItem) { //error callback
+                        scope.rowData = oldItem; //revert the object
+                        scope.data = oldData; //revert the property data
+                    });
                 }, function () {
                     console.log('Error hiding edit dialog.');
                 });
