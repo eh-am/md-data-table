@@ -58,6 +58,10 @@ function mdEditable($mdDialog, moment, $mdTable) {
         element.on('click', function (event) {
             event.stopPropagation();
 
+            if(tableCtrl.hasAccess == "false"){
+                return;
+            }
+
             //find the row
             var row = element.parent();
 

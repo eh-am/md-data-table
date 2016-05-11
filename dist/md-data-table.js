@@ -967,6 +967,10 @@ function mdEditable($mdDialog, moment, $mdTable) {
         element.on('click', function (event) {
             event.stopPropagation();
 
+            if(tableCtrl.hasAccess == "false"){
+                return;
+            }
+
             //find the row
             var row = element.parent();
 
@@ -1771,7 +1775,8 @@ function mdTable() {
       rowSelect: '=mdRowSelect',
       // not sure
       rowUpdateCallback: '&mdRowUpdateCallback',
-      rowClick: '=mdRowClick'
+      rowClick: '=mdRowClick',
+      hasAccess: '@'
     }
   };
 }

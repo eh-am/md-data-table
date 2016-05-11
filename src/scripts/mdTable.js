@@ -278,7 +278,8 @@ function mdTable() {
       rowSelect: '=mdRowSelect',
       // not sure
       rowUpdateCallback: '&mdRowUpdateCallback',
-      rowClick: '=mdRowClick'
+      rowClick: '=mdRowClick',
+      hasAccess: '@'
     }
   };
 }
