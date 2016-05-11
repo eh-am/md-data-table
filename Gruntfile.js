@@ -10,20 +10,24 @@ module.exports = function (grunt) {
       ' */\n' +
       '(function (window, angular, undefined) {\n\'use strict\';\n\n';
   }
-  
+
   function getVersion() {
     return grunt.file.readJSON('./bower.json').version;
   }
 
   // load plugins
   require('load-grunt-tasks')(grunt, {scope: 'devDependencies'});
+  grunt.loadNpmTasks('grunt-karma'); //unit tests
+  grunt.loadNpmTasks('grunt-protractor-runner'); //e2e tests
+  grunt.loadNpmTasks('grunt-notify');
+
 
   grunt.initConfig({
-    
+
     config: {
       livereload: 35729
     },
-    
+
     // Add vendor prefixes
     autoprefixer: {
       options: {
@@ -40,7 +44,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // remove generated files
     clean: {
       app: 'app/app.css',
@@ -64,7 +68,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // static web server
     connect: {
       app: {
@@ -75,9 +79,17 @@ module.exports = function (grunt) {
           livereload: '<%= config.livereload %>',
           base: ['bower_components', 'dist', 'app']
         }
-      }
+      },
+      test: {
+        options: {
+          port: 8001,
+          // hostname: '127.0.0.1',
+          hostname: '0.0.0.0',
+          base: ['bower_components', 'dist', 'app']
+        }
+      }      
     },
-    
+
     // minify css files
     cssmin: {
       build: {
@@ -86,7 +98,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // convert templates to javascript and load them into
     // the template cache
     html2js: {
@@ -104,7 +116,18 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
+    //unit tests
+    karma: {
+      options: {
+        configFile: 'karma.conf.js'
+      },
+      watch: {
+        singleRun: false,
+        autoWatch: true
+      },
+      unit:{  }
+    },
     // report bad javascript syntax, uses jshint-stylish for
     // more readable logging to the console
     jshint: {
@@ -131,6 +154,33 @@ module.exports = function (grunt) {
       }
     },
 
+    // e2e tests
+    protractor: {
+      options: {
+        configFile: "protractor.conf.js", // Default config file
+        keepAlive: true,
+      },
+      watch: {
+        options: {
+          args: {
+            params: {
+               baseUrl: 'http://localhost:8000',
+            }
+          }
+        }
+      },
+      singleRun: {
+        options: {
+          keepAlive: false,
+          args: {
+            params: {
+               baseUrl: 'http://localhost:8001',
+            }
+          }
+        }
+      }
+    },
+
     // minify javascript files
     uglify: {
       build: {
@@ -139,7 +189,7 @@ module.exports = function (grunt) {
         }
       }
     },
-    
+
     // perform tasks on file change
     watch: {
       options: {
@@ -171,21 +221,36 @@ module.exports = function (grunt) {
       gruntfile: {
         files: 'Gruntfile.js'
       },
+      e2e: {
+        files: 'tests/e2e/**/*.js',
+        tasks: ['protractor:watch']
+      },
+      karma: {
+        files: 'tests/unit/**/*.js',
+        tasks: ['karma:unit']
+      },
       index: {
         files: 'app/index.html'
       }
     }
   });
-  
+
   grunt.registerTask('default', function () {
-    
+
     // buld the md-data-table module
     grunt.task.run('build');
-    
+
     // start the app
-    grunt.task.run('serve');
+    // grunt.task.run('serve');
+
+    grunt.task.run([
+      'connect:app',
+      'karma:unit',
+      'protractor:watch',
+      'watch'
+    ]);
   });
-  
+
   grunt.registerTask('build', [
     'jshint:build',
     'less:build',
@@ -195,7 +260,7 @@ module.exports = function (grunt) {
     'concat:build',
     'uglify:build'
   ]);
-  
+
   grunt.registerTask('serve', [
     'jshint:app',
     'less:app',
@@ -203,5 +268,27 @@ module.exports = function (grunt) {
     'connect:app',
     'watch'
   ]);
+
+
+    // run a single time
+   grunt.registerTask('test:unit', [
+     'html2js', // we have to convert all those .html files to .js ones!
+     'karma:unit'
+   ]);
+
+   // run a single time
+   grunt.registerTask('test:e2e', [
+     'html2js',
+     'connect:test',
+     'protractor:singleRun',
+   ]);
+
+   // run both unit and e2e tests once
+   grunt.registerTask('test', function(){
+     grunt.task.run('test:unit');
+     grunt.task.run('test:e2e');
+   });
+
+
 
 };
