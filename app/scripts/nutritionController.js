@@ -191,9 +191,13 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
 
 
 
-    $scope.rowUpdateCallback = function(){
-        alert('Update callback called');
-    }
+  $scope.rowUpdateCallback = function () {
+      var i = $scope.dirtyItems.length;
+      while (i--) {
+          alert('Update callback called');
+          $scope.dirtyItems.splice(i,1);
+      }
+  };
 
 
 }]);

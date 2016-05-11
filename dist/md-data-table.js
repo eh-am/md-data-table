@@ -495,21 +495,17 @@ function mdTableService() {
      * @param value
      */
     function setDeepValue(obj, prop, value) {
-        if (typeof prop === "string") {
-            prop = prop.split(".");
+        if (typeof prop === 'string') {
+            prop = prop.split('.');
             prop.shift(); //remove the object name
         }
 
         if (prop.length > 1) {
             var e = prop.shift();
-            setDeepValue(obj[e] =
-                    Object.prototype.toString.call(obj[e]) === "[object Object]"
-                        ? obj[e]
-                        : {},
-                prop,
-                value);
-        } else
+            setDeepValue(obj[e] = Object.prototype.toString.call(obj[e]) === '[object Object]' ? obj[e] : {}, prop, value);
+        } else {
             obj[prop[0]] = value;
+        }
     }
 
     return {
@@ -975,8 +971,8 @@ function mdEditable($mdDialog, moment, $mdTable) {
             var row = element.parent();
 
             //check if the record was disabled
-            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))){
-              return;
+            if(scope.$parent.$eval($mdTable.getAttr(row, 'mdDisableSelect'))) {
+                return;
             }
 
             //get type of edit field
@@ -1013,11 +1009,18 @@ function mdEditable($mdDialog, moment, $mdTable) {
                         //remove duplicates
                         $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
 
+                        var oldItem = {};
+
+                        angular.copy(rowData,oldItem);
+
                         //sync data
                         $mdTable.updateObject(rowData, attrs.data, scope.data);
 
                         //update dirty items
-                        tableCtrl.dirtyItems.push(rowData);
+                        tableCtrl.dirtyItems.push({
+                            oldItem:oldItem,
+                            newItem:rowData
+                        });
 
                         //call callback
                         if (typeof tableCtrl.rowUpdateCallback === 'function') {
@@ -1454,6 +1457,58 @@ function mdSelect($compile, $parse) {
 }
 
 mdSelect.$inject = ['$compile', '$parse'];
+
+angular.module('md.data.table')
+    .directive('mdSelectUpdateCallback', mdSelectUpdateCallback);
+/**
+ * This directive for the md-select in the md table cell.  The md-select has bugs when it comes to on change event and track by value.
+ * The on change event is fired for every item in the list. With this directive we can control the events.
+ */
+function mdSelectUpdateCallback($mdTable) {
+    'use strict';
+
+    return {
+        restrict: 'A',
+        require: '^^mdDataTable',
+        link: function (scope, element, attrs, tableCtrl) {
+
+            scope.enableOnChange = false;
+
+            var oldItem = {};
+
+            scope.$watch(attrs.ngModel, function (newValue, oldValue) {
+                if (scope.enableOnChange && newValue !== undefined) {
+                    var rowData = scope[attrs.ngModel.split('.')[0]];
+
+                    //remove duplicates
+                    $mdTable.removeDuplicates(tableCtrl.dirtyItems, rowData.id);
+
+                    //update dirty items
+                    tableCtrl.dirtyItems.push({
+                        oldItem: oldItem,
+                        newItem: rowData
+                    });
+
+                    //call callback
+                    if (typeof tableCtrl.rowUpdateCallback === 'function') {
+                        tableCtrl.rowUpdateCallback();
+                    }
+                }
+            });
+
+            //enable the watcher only when the user interacts with the select
+            element.on('click', function () {
+                if (!scope.enableOnChange) {
+                    scope.enableOnChange = true;
+                }
+
+                angular.copy(scope[attrs.ngModel.split('.')[0]],oldItem);
+            });
+        }
+    };
+}
+
+mdSelectUpdateCallback.$inject = ['$mdTable'];
 
 angular.module('md.data.table').directive('mdTable', mdTable);
 
