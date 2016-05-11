@@ -967,7 +967,7 @@ function mdEditable($mdDialog, moment, $mdTable) {
         element.on('click', function (event) {
             event.stopPropagation();
 
-            if(tableCtrl.hasAccess == "false"){
+            if(tableCtrl.hasAccess === 'false'){
                 return;
             }
 
@@ -1460,7 +1460,7 @@ angular.module('md.data.table')
  * This directive for the md-select in the md table cell.  The md-select has bugs when it comes to on change event and track by value.
  * The on change event is fired for every item in the list. With this directive we can control the events.
  */
-function mdSelectUpdateCallback($mdTable) {
+function mdSelectUpdateCallback() {
     'use strict';
 
     return {
@@ -1472,7 +1472,7 @@ function mdSelectUpdateCallback($mdTable) {
 
             var oldItem = {};
 
-            scope.$watch(attrs.ngModel, function (newValue, oldValue) {
+            scope.$watch(attrs.ngModel, function (newValue) {
                 if (scope.enableOnChange && newValue !== undefined) {
                     var rowData = scope[attrs.ngModel.split('.')[0]];
 

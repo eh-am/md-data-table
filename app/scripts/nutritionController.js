@@ -189,11 +189,18 @@ angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdE
     }, 2000);
   };
 
-
-
-  $scope.rowUpdateCallback = function (item, onError) {
+  $scope.rowUpdateCallback = function (item,onError) {
      alert('item :' + item);
   };
 
+  $scope.rowClick = function (item){
+      alert('click:' + item);
+  };
+
+  $scope.toggleTable = function(){
+      $scope.toggleContainer = !$scope.toggleContainer;
+  };
+
+  $scope.toggleContainer = false;
 
 }]);
