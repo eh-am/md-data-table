@@ -34,7 +34,13 @@ function mdEditableDialogController($scope, $mdDialog, editType, fieldMaxLength,
         //console.log('scope editType is', $scope.editType);
         var $form, inputText, inputValue;
 
-        $form = angular.element('form[name="inlineEditForm"]');
+        // I didn't use angular.element because it would require jquery
+        // we can use querySelector instead
+        // TODO: start looking from a more specific point, instead of 'document'
+        $form = angular.element(document.querySelector('form[name="inlineEditForm"]'))
+        // $form = angular.element('form[name="inlineEditForm"]');
+
+
         // I was going this way but then saw that our workaround is necessary only for mdDatepicker
         //switch ($scope.editType) {
         //    case 'text':

@@ -55,8 +55,9 @@ function mdTable() {
 
     self.$$hash = new Hash();
     self.$$columns = {};
+    self.dirtyItems = [];
 
-    self._rowUpdateCallback = $scope.$mdTable.rowUpdateCallback;
+    self.rowUpdateCallback = $scope.$mdTable.rowUpdateCallback;
 
     self.isReady = {
         body: $q.defer(),
@@ -246,7 +247,7 @@ function mdTable() {
             newItem: rowData
         });
 
-        console.log('self.rowUpdateCallback', self.rowUpdateCallback);
+        // console.log('self.rowUpdateCallback', self.rowUpdateCallback);
         //call callback
         if (typeof self.rowUpdateCallback === 'function') {
             //execute the callback for each row

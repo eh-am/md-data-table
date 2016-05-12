@@ -3,7 +3,7 @@
   "data": [
     {
       "id": "1",
-      "name": "",
+      "name": "Test",
       "type": "Ice cream",
       "date": "2015-01-01",
       "calories": { "value": 159.0 },
