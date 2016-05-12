@@ -7,11 +7,6 @@ describe('md-editable', function() {
   });
 
 
-  it('should have a correct title', function () {
-
-
-      expect(browser.getTitle()).toBe('Nutrition');
-  })
 
 
   it('should open a dialog box when clicking an editable item', function () {
@@ -25,7 +20,6 @@ describe('md-editable', function() {
     });
 
   });
-
 
 
 
@@ -56,38 +50,69 @@ describe('md-editable', function() {
   it('should update correctly the edited field', function () {
     var replacingText = "T_E_S_T";
     var editableCell = element.all(by.css("#md-data-table-1 tbody tr td[md-editable='text']")).first();
+    var originalText;
+    var dialog;
 
-    editableCell.click().then(function(){
-      browser.waitForAngular();
-      var dialog = element(by.css('md-dialog'));
-      dialog.element(by.model('editModel.data')).sendKeys(editableCell + replacingText);
+    editableCell.getText()
+      .then(function(ot){originalText = ot; editableCell.click() })
+      .then(function(){
 
-      // this doesn't look very right, we should have a better way to find the Save button
-      dialog.element(by.css('button[aria-label="Save"]')).click().then(function(){
+        dialog = element(by.css('md-dialog'));
+        dialog.element(by.model('editModel.data')).clear().sendKeys(originalText + replacingText);
+      })
+      .then(function(){
 
-        expect(editableCell.getText()).toBe(editableCell + replacingText);
+        // this doesn't look very right, we should have a better way to find the Save button
+        dialog.element(by.css('button[aria-label="Save"]')).click();
+      })
+      .then(function(){
+        browser.waitForAngular();
+
+        expect(editableCell.getText()).toBe(originalText + replacingText);
       });
 
-    });
   });
 
-  // it('should NOT update the edited field when we click on cancel', function () {
-  //   var replacingText = "T_E_X_T";
-  //   var editableCell = element.all(by.css("#md-data-table-1 tbody tr td[md-editable='text']")).first();
-  //   editableCell.click().then(function(){
-  //     browser.waitForAngular();
-  //     var dialog = element(by.css('md-dialog'));
-  //     dialog.element(by.model('editModel.data')).sendKeys(replacingText);
-  //
-  //     // this doesn't look very right, we should have a better way to find the Save button
-  //     dialog.element(by.css('button[aria-label="Save"]')).click().then(function(){
-  //
-  //       expect(editableCell.getText()).toBe(replacingText);
-  //     });
-  //
-  //   });
-  // });
 
+
+  it('should NOT pdate correctly when the CANCEL button is clicked', function () {
+    var replacingText = "T_E_S_T";
+    var editableCell = element.all(by.css("#md-data-table-1 tbody tr td[md-editable='text']")).first();
+    var originalText;
+    var dialog;
+
+    editableCell.getText()
+      .then(function(ot){originalText = ot; editableCell.click() })
+      .then(function(){
+
+        dialog = element(by.css('md-dialog'));
+        dialog.element(by.model('editModel.data')).clear().sendKeys(originalText + replacingText);
+      })
+      .then(function(){
+
+        // this doesn't look very right, we should have a better way to find the Save button
+        dialog.element(by.css('button[aria-label="Cancel"]')).click();
+      })
+      .then(function(){
+        browser.waitForAngular();
+
+        // we expect the text to not change
+        expect(editableCell.getText()).toBe(originalText);
+      });
+  });
+
+
+  it('should call the right callback when the field is edited', function(){
+    var rowUpdateCallback = table.evaluate('rowUpdateCallback');
+    // TODO:
+    // don't know how to test it
+  });
+
+
+  it('should not allow to update a non valid field (eg. length < minlength )', function(){
+    // TODO:
+    // don't know how to test it
+  });
 
 
 
