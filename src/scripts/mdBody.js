@@ -4,7 +4,7 @@ angular.module('md.data.table').directive('mdBody', mdBody);
 
 function mdBody() {
 
-  function compile(tElement) {
+  function compile(tElement) {    
     tElement.addClass('md-body');
   }
 

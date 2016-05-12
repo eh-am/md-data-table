@@ -173,7 +173,7 @@ angular.module('md.data.table').directive('mdBody', mdBody);
 
 function mdBody() {
 
-  function compile(tElement) {
+  function compile(tElement) {    
     tElement.addClass('md-body');
   }
 
@@ -183,70 +183,95 @@ function mdBody() {
   };
 }
 
+
 angular.module('md.data.table').directive('mdCell', mdCell);
 
 function mdCell() {
-  
+
   function compile(tElement) {
     var select = tElement.find('md-select');
-    
+
     if(select.length) {
       select.addClass('md-table-select').attr('md-container-class', 'md-table-select');
     }
-    
+
     tElement.addClass('md-cell');
-    
+
     return postLink;
   }
-  
+
   // empty controller to be bind properties to in postLink function
   function Controller() {
-    
+
   }
-  
+
   function postLink(scope, element, attrs, ctrls) {
     var select = element.find('md-select');
     var cellCtrl = ctrls.shift();
     var tableCtrl = ctrls.shift();
-    
+
     if(attrs.ngClick) {
       element.addClass('md-clickable');
     }
-    
+
     if(select.length) {
       select.on('click', function (event) {
         event.stopPropagation();
       });
-      
+
       element.addClass('md-clickable').on('click', function (event) {
         event.stopPropagation();
         select[0].click();
       });
     }
-    
+
     cellCtrl.getTable = tableCtrl.getElement;
-    
+
     function getColumn() {
       return tableCtrl.$$columns[getIndex()];
     }
-    
+
     function getIndex() {
       return Array.prototype.indexOf.call(element.parent().children(), element[0]);
     }
-    
+
     scope.$watch(getColumn, function (column) {
       if(!column) {
         return;
       }
-      
+
       if(column.numeric) {
         element.addClass('md-numeric');
       } else {
         element.removeClass('md-numeric');
       }
     });
+
+    //TODO
+    //if columnMode
+
+    scope.$watch(tableCtrl.isInColumnMode, function(newValue){
+      if (tableCtrl.isInColumnMode() === true){
+
+        // var headerRows = angular.element(tableCtrl.getHeaderRows()).find('th');
+        // element.wrap(angular.element('<tr></tr>'));
+        // element.parent().prepend(angular.element(headerRows[0]));
+
+      } else {
+
+      }
+    });
+    // if (tableCtrl.isInColumnMode()){
+
+    //
+    //   // console.log(headerRows);
+    //   // console.log(headerRows[0]);
+    //
+    //
+    // }
+    //
   }
-  
+
   return {
     controller: Controller,
     compile: compile,
@@ -254,6 +279,7 @@ function mdCell() {
     restrict: 'A'
   };
 }
+
 
 angular.module('md.data.table').directive('mdColumn', mdColumn);
 
@@ -1097,26 +1123,35 @@ function mdHead($compile) {
 
   function compile(tElement) {
     tElement.addClass('md-head');
+
     return postLink;
   }
-  
+
   // empty controller to be bind scope properties to
   function Controller() {
-    
   }
-  
+
   function postLink(scope, element, attrs, tableCtrl) {
     // because scope.$watch is unpredictable
     var oldValue = new Array(2);
-    
+
+    scope.$watch(tableCtrl.isInColumnMode, function(newValue){
+        if (newValue == true){
+          element.addClass('ng-hide');
+        } else {
+          element.removeClass('ng-hide');
+        }
+    });
+
+
     function addCheckboxColumn() {
       element.children().prepend('<th class="md-column md-checkbox-column">');
     }
-    
+
     function attatchCheckbox() {
       element.prop('lastElementChild').firstElementChild.appendChild($compile(createCheckBox())(scope)[0]);
     }
-    
+
     function createCheckBox() {
       return angular.element('<md-checkbox>').attr({
         'aria-label': 'Select All',
@@ -1125,43 +1160,43 @@ function mdHead($compile) {
         'ng-disabled': '!getSelectableRows().length'
       });
     }
-    
+
     function detachCheckbox() {
       var cell = element.prop('lastElementChild').firstElementChild;
-      
+
       if(cell.classList.contains('md-checkbox-column')) {
         angular.element(cell).empty();
       }
     }
-    
+
     function enableRowSelection() {
       return tableCtrl.$$rowSelect;
     }
-    
+
     function mdSelectCtrl(row) {
       return angular.element(row).controller('mdSelect');
     }
-    
+
     function removeCheckboxColumn() {
       Array.prototype.some.call(element.find('th'), function (cell) {
         return cell.classList.contains('md-checkbox-column') && cell.remove();
       });
     }
-    
+
     scope.allSelected = function () {
       var rows = scope.getSelectableRows();
-      
+
       return rows.length && rows.every(function (row) {
         return row.isSelected();
       });
     };
-    
+
     scope.getSelectableRows = function () {
       return tableCtrl.getBodyRows().map(mdSelectCtrl).filter(function (ctrl) {
         return ctrl && !ctrl.disabled;
       });
     };
-    
+
     scope.selectAll = function () {
       tableCtrl.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {
         if(ctrl && !ctrl.isSelected()) {
@@ -1169,11 +1204,11 @@ function mdHead($compile) {
         }
       });
     };
-    
+
     scope.toggleAll = function () {
       return scope.allSelected() ? scope.unSelectAll() : scope.selectAll();
     };
-    
+
     scope.unSelectAll = function () {
       tableCtrl.getBodyRows().map(mdSelectCtrl).forEach(function (ctrl) {
         if(ctrl && ctrl.isSelected()) {
@@ -1181,12 +1216,12 @@ function mdHead($compile) {
         }
       });
     };
-    
+
     scope.$watchGroup([enableRowSelection, tableCtrl.enableMultiSelect], function (newValue) {
       if(newValue[0] !== oldValue[0]) {
         if(newValue[0]) {
           addCheckboxColumn();
-          
+
           if(newValue[1]) {
             attatchCheckbox();
           }
@@ -1200,11 +1235,11 @@ function mdHead($compile) {
           detachCheckbox();
         }
       }
-      
+
       angular.copy(newValue, oldValue);
     });
   }
-  
+
   return {
     bindToController: true,
     compile: compile,
@@ -1219,7 +1254,8 @@ function mdHead($compile) {
   };
 }
 
-mdHead.$inject = ['$compile'];
+mdHead.$inject = ['$compile', '$mdTable'];
+
 
 angular.module('md.data.table').directive('mdRow', mdRow);
 
@@ -1229,23 +1265,23 @@ function mdRow() {
     tElement.addClass('md-row');
     return postLink;
   }
-  
+
   function postLink(scope, element, attrs, tableCtrl) {
     function enableRowSelection() {
       return tableCtrl.$$rowSelect;
     }
-    
+
     function isBodyRow() {
       return tableCtrl.getBodyRows().indexOf(element[0]) !== -1;
     }
-    
+
     function isChild(node) {
       return element[0].contains(node[0]);
     }
-    
+
     if(isBodyRow()) {
       var cell = angular.element('<td class="md-cell">');
-      
+
       scope.$watch(enableRowSelection, function (enable) {
         // if a row is not selectable, prepend an empty cell to it
         if(enable && !attrs.mdSelect) {
@@ -1254,11 +1290,12 @@ function mdRow() {
           }
           return;
         }
-        
+
         if(isChild(cell)) {
           cell.remove();
         }
       });
+
     }
   }
 
@@ -1268,6 +1305,7 @@ function mdRow() {
     restrict: 'A'
   };
 }
+
 
 angular.module('md.data.table').directive('mdSelect', mdSelect);
 
@@ -1572,6 +1610,11 @@ function mdTable() {
     var rows = tElement.find('tbody').find('tr');
     rows.attr('md-select-row', ''); //always add this attribute, use other attributes to control this directive
 
+    //TODO
+    //test this part
+    if (tAttrs.mdDataTableColumnMode === undefined){
+      tAttrs['mdDataTableColumnMode'] = false;
+    }
   }
 
   function Controller($attrs, $element, $q, $scope, $mdTable) {
@@ -1791,6 +1834,12 @@ function mdTable() {
             }
         }
     };
+
+    self.isInColumnMode = function(){
+      //!! turns undefined in false
+      return  !!$scope.$eval($attrs['mdDataTableColumnMode']);
+    }
+
   }
 
   Controller.$inject = ['$attrs', '$element', '$q', '$scope', '$mdTable'];

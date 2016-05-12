@@ -44,6 +44,11 @@ function mdTable() {
     var rows = tElement.find('tbody').find('tr');
     rows.attr('md-select-row', ''); //always add this attribute, use other attributes to control this directive
 
+    //TODO
+    //test this part
+    if (tAttrs.mdDataTableColumnMode === undefined){
+      tAttrs['mdDataTableColumnMode'] = false;
+    }
   }
 
   function Controller($attrs, $element, $q, $scope, $mdTable) {
@@ -263,6 +268,12 @@ function mdTable() {
             }
         }
     };
+
+    self.isInColumnMode = function(){
+      //!! turns undefined in false
+      return  !!$scope.$eval($attrs['mdDataTableColumnMode']);
+    }
+
   }
 
   Controller.$inject = ['$attrs', '$element', '$q', '$scope', '$mdTable'];

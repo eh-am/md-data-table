@@ -1,6 +1,13 @@
 angular.module('nutritionApp').controller('nutritionController', ['$http', '$mdEditDialog', '$q', '$timeout', '$scope', function ($http, $mdEditDialog, $q, $timeout, $scope) {
   'use strict';
 
+  $scope.columnMode = true;
+
+  $scope.toggleColumnMode = function(){
+    $scope.columnMode = !$scope.columnMode;
+  }
+
+
   $scope.options = {
     rowSelection: true,
     multiSelect: true,
