@@ -28,6 +28,12 @@
 
     <md-content class="md-padding" layout="column" >
       <div ng-controller="nutritionController">
+        <md-card ng-include="'templates/nutrition-table-responsive.html'">
+        </md-card>
+      </div>
+
+
+      <div ng-controller="nutritionController">
         <md-card ng-include="'templates/nutrition-table-legacy.html'">
         </md-card>
       </div>

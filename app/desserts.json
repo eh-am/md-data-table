@@ -21,7 +21,7 @@
       "type": "Ice cream",
       "date": "2015-01-01",
       "calories": { "value": 237.0 },
-      "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
+      "note":"Testing note filed, blah, blah, blah,blah, blah, blah,blah, blah, blahTesting note filed, blah, blah, blah,blah, blah, blah,blah, blah, blahTesting note filed, blah, blah, blah,blah, blah, blah,blah, blah, blahTesting note filed, blah, blah, blah,blah, blah, blah,blah, blah, blah",
       "fat": { "value": 9.0 },
       "carbs": { "value": 37.0 },
       "protein": { "value": 4.3 },

@@ -171,6 +171,28 @@ md-select.md-table-select > .md-select-value > span.md-select-icon:after {
 .md-select-menu-container.md-pagination-select .md-text {
   font-size: 12px;
 }
+.md-data-table-responsive-row {
+  border: 1px rgba(0, 0, 0, 0.12) solid;
+  display: table;
+  width: 100%;
+  margin-bottom: 30px;
+}
+.md-data-table-responsive-row > td {
+  display: table-row;
+}
+.md-data-table-responsive-row > td > table {
+  width: 100%;
+}
+.md-data-table-responsive-row thead,
+.md-data-table-responsive-row tbody {
+  display: table-cell;
+}
+.md-data-table-responsive-row tbody {
+  float: right;
+}
+.md-data-table-responsive-row td {
+  border: none !important;
+}
 md-toolbar.md-table-toolbar {
   box-shadow: none;
 }
