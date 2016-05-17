@@ -10,8 +10,8 @@
 <h1>RESPONSIVE</h1>
 <md-data-table-container>
 
-        <table hide-sm hide-xs id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
-          <thead md-head data-md-order="query.order" md-on-reorder="onReorder">
+        <table hide-sm hide-xs md-row-select="options.rowSelection"  multiple="{{options.multiSelect}}" data-ng-model="selected" id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems" md-progress="promise">
+          <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
             <tr md-row>
               <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
               <th md-column md:order:by="type"><span>Type</span></th>
@@ -32,7 +32,7 @@
           </thead>
 
             <tbody md-body>
-            <tr md-row md-auto-select
+            <tr md-row md-select="dessert" md-auto-select md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"
                 data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
                 <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
                 <td md-cell>
@@ -56,7 +56,7 @@
 
 
         <!--  Responsive -->
-        <table hide-gt-sm data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+        <table hide-gt-sm data-md-table md-progress="deferred" data-ng-model="selected" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
             <tbody>
 
               <tr class="md-data-table-responsive-row" md-auto-select
