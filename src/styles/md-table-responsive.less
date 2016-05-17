@@ -1,5 +1,5 @@
-.md-data-table-responsive-row{
-  border: 1px rgba(0, 0, 0, 0.12) solid;
+.md-data-table-responsive-row > tbody > tr{
+  // border: 1px rgba(0, 0, 0, 0.12) solid;
   display: table;
   width: 100%;
   margin-bottom: 30px;
@@ -18,5 +18,68 @@
 
   td{
     border: none !important;
+    text-align: right;
   }
 }
+
+
+
+
+
+.md-data-table-responsive-row  {
+    width: 100%;
+    background-color: transparent;
+    margin-top: 4px;
+    margin-bottom: 0;
+
+    &.table-striped {
+      > tbody > tr > td,
+      > tbody > tr:nth-child(odd) {
+        background-color: @md-bg;
+      }
+      > tbody > tr > td:nth-child(odd) {
+        background-color: @md-strip;
+      }
+    }
+
+
+    // > tbody > tr > td > table {
+      > tbody {
+        // display: block;
+
+        > tr {
+          display: block;
+          margin-bottom: 3px;
+          box-shadow:  0 1px 3px 0 rgba(0, 0, 0,0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+
+          > td {
+            background-color: @md-bg;
+            font-size: @md-font-size;
+            display: block;
+            vertical-align: middle;
+            text-align: right;
+            empty-cells: show;
+          }
+          > td:empty {
+            height: 15px;
+          }
+          > td[data-title]:before {
+            content: attr(data-title);
+            float: left;
+            font-size: @md-font-size;
+          }
+        }
+      }
+
+    // }
+}
+
+
+// .table-striped {
+//   > tbody > tr:nth-child(odd) {
+//     > td,
+//     > th {
+//       background-color: @md-strip;
+//     }
+//   }
+// }

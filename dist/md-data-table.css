@@ -171,27 +171,61 @@ md-select.md-table-select > .md-select-value > span.md-select-icon:after {
 .md-select-menu-container.md-pagination-select .md-text {
   font-size: 12px;
 }
-.md-data-table-responsive-row {
-  border: 1px rgba(0, 0, 0, 0.12) solid;
+.md-data-table-responsive-row > tbody > tr {
   display: table;
   width: 100%;
   margin-bottom: 30px;
 }
-.md-data-table-responsive-row > td {
+.md-data-table-responsive-row > tbody > tr > td {
   display: table-row;
 }
-.md-data-table-responsive-row > td > table {
+.md-data-table-responsive-row > tbody > tr > td > table {
   width: 100%;
 }
-.md-data-table-responsive-row thead,
-.md-data-table-responsive-row tbody {
+.md-data-table-responsive-row > tbody > tr thead,
+.md-data-table-responsive-row > tbody > tr tbody {
   display: table-cell;
 }
-.md-data-table-responsive-row tbody {
+.md-data-table-responsive-row > tbody > tr tbody {
   float: right;
 }
-.md-data-table-responsive-row td {
+.md-data-table-responsive-row > tbody > tr td {
   border: none !important;
+  text-align: right;
+}
+.md-data-table-responsive-row {
+  width: 100%;
+  background-color: transparent;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+.md-data-table-responsive-row.table-striped > tbody > tr > td,
+.md-data-table-responsive-row.table-striped > tbody > tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+.md-data-table-responsive-row.table-striped > tbody > tr > td:nth-child(odd) {
+  background-color: #fcfcfc;
+}
+.md-data-table-responsive-row > tbody > tr {
+  display: block;
+  margin-bottom: 3px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+.md-data-table-responsive-row > tbody > tr > td {
+  background-color: #ffffff;
+  font-size: 13px;
+  display: block;
+  vertical-align: middle;
+  text-align: right;
+  empty-cells: show;
+}
+.md-data-table-responsive-row > tbody > tr > td:empty {
+  height: 15px;
+}
+.md-data-table-responsive-row > tbody > tr > td[data-title]:before {
+  content: attr(data-title);
+  float: left;
+  font-size: 13px;
 }
 md-toolbar.md-table-toolbar {
   box-shadow: none;
