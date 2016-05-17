@@ -10,7 +10,9 @@ Specification for Material Design data tables can be found [here](http://www.goo
 * [Usage](#usage)
 * [Change Log](CHANGELOG.md)
 * [API Documentation](#api-documentation)
-* [Contributing] (#contributing)
+* [Contributing](#contributing)
+* [Responsiveness](#responsiveness)
+* [Testing](#testing)
 
 ## License
 
@@ -681,3 +683,12 @@ If you have more questions, there's a working example on nutrition-table-respons
 ## Bugs/Not working
 For now, selecting rows is not working on responsive. So remember to remove the
 md-row-select attribute on it.
+
+
+# Testing
+
+For unit tests, run grunt test:unit
+
+For e2e tests, run node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update once, then run grunt test:e2e
+
+To serve and keep watching for changes in test files, run grunt
