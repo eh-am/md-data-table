@@ -71,19 +71,19 @@ angular.module('myApp', [require('angular-material-data-table')]);
 
 angular.module('demoApp').controller('sampleController', ['$nutrition', '$scope', function ($nutrition, $scope) {
   'use strict';
-  
+
   $scope.selected = [];
-  
+
   $scope.query = {
     order: 'name',
     limit: 5,
     page: 1
   };
-  
+
   function success(desserts) {
     $scope.desserts = desserts;
   }
-  
+
   $scope.getDesserts = function () {
     $scope.promise = $nutrition.desserts.get($scope.query, success).$promise;
   };
@@ -205,14 +205,14 @@ $scope.editComment = function (event, dessert) {
   // if auto selection is enabled you will want to stop the event
   // from propagating and selecting the row
   event.stopPropagation();
-  
-  /* 
+
+  /*
    * messages is commented out because there is a bug currently
    * with ngRepeat and ngMessages were the messages are always
    * displayed even if the error property on the ngModelController
    * is not set, I've included it anyway so you get the idea
    */
-   
+
   var promise = $mdEditDialog.small({
     // messages: {
     //   test: 'I don\'t like tests!'
@@ -574,3 +574,110 @@ grunt build
 ```
 
 Create a pull request!
+
+# Responsiveness
+
+The idea here is to add a second table, which you will show when you desire (probably on mobile).
+This second table is similar to the original one, however it takes some DOM changes:
+ - All the attributes for the table should be the same, for example, if the original table contains `data-md-table md-progress="deferred" data-ng-model="selected" md-row-update-callback="rowUpdateCallback()"` the responsive one should also contain the same attributes. ** The only additional attribute is the class
+`md-data-table-responsive`.
+
+- The structure has to be like:
+`table -> tbody -> tr -> td`
+Each TD corresponds to a row
+
+  Inside this td we have to have another table, with both thead and tbody.
+
+Where the head is exactly the same as in the original one. The body is also the same.
+Let's see an example to make it clear.
+
+## Example  
+Given the original table with two fields:
+```
+        <table hide-sm hide-xs md-row-select="options.rowSelection"  multiple="{{options.multiSelect}}" data-ng-model="selected" id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems" md-progress="promise">
+
+          <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+            <tr md-row>
+              <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
+              <th md-column md:order:by="type"><span>Type</span></th>
+            </tr>
+          </thead>
+
+          <tbody md-body>
+            <tr md-row md-select="dessert" md-auto-select md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"
+                data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+                <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                <td md-cell>
+                    <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
+                        <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
+                    </md-select>
+                </td>
+              </tr>
+            </tbody>
+          </table>        
+```
+
+The responsive one should be something along these terms:
+```
+<table class="md-data-table-responsive table-striped" hide-gt-sm data-md-table md-progress="deferred" data-ng-model="selected" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+    <tbody>
+
+      <tr md-auto-select
+          data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+
+          <!--  Name -->
+          <td>
+            <table>
+              <!--  Header -->
+              <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
+              </thead>
+              <!--  Body -->
+              <tbody md-body>
+                <tr md-row>
+                  <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+
+          <!--  Type -->
+          <td>
+            <table>
+              <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+                <tr>
+                <th md-column md:order:by="type"><span>Type</span></th>
+                </tr>
+              </thead>
+              <tbody md-body>
+                <tr md-row>
+                  <td md-cell>
+                      <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
+                          <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
+                      </md-select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+
+      </tr>
+</table>          
+```
+
+
+Which will be rendered as
+
+(The original one)
+![](docs/ec73f4e141d5f7ba3d2d1ac5dec787af.png)
+
+Responsive
+![](docs/b0731d3bf94a3c917a6175e58f87cb13.png)
+
+
+If you have more questions, there's a working example on nutrition-table-responsive.html
+
+
+## Bugs/Not working
+For now, selecting rows is not working on responsive. So remember to remove the
+md-row-select attribute on it.

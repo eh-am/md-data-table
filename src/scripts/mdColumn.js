@@ -18,11 +18,12 @@ function mdColumn($compile, $mdUtil) {
 
       $compile(sortIcon.addClass('md-sort-icon').attr('ng-class', 'getDirection()'))(scope);
 
-      if(element.hasClass('md-numeric')) {
-        element.prepend(sortIcon);
-      } else {
-        element.append(sortIcon);
-      }
+      // if(element.hasClass('md-numeric')) {
+      //   element.prepend(sortIcon);
+      // } else {
+      //   element.append(sortIcon);
+      // }
+      element.append(sortIcon);
     }
 
     function detachSortIcon() {
