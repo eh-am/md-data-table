@@ -1,6 +1,5 @@
 <md-data-table-toolbar ng-show="!selected.length">
     <h2 class="md-title">Nutrition</h2>
-    (if it's working here, then we are fine)
 </md-data-table-toolbar>
 
 <md-data-table-toolbar class="alternate" ng-show="selected.length">
@@ -8,9 +7,7 @@
 </md-data-table-toolbar>
 
 
-Column Mode? {{ columnMode }}
 <h1>RESPONSIVE</h1>
-<button type="button" name="button" class="md-button" ng-click="toggleColumnMode()">Toggle Column Mode</button>
 <md-data-table-container>
 
         <table hide-sm hide-xs id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
