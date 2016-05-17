@@ -224,4 +224,14 @@ table.md-table {
       }
     }
   }
+
+  &.table-striped {
+    > tbody > tr:nth-child(odd) {
+      > td,
+      > th {
+        background-color: @md-strip;
+      }
+    }
+  }
+
 }

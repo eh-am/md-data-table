@@ -199,17 +199,19 @@ md-select.md-table-select > .md-select-value > span.md-select-icon:after {
   margin-top: 4px;
   margin-bottom: 0;
 }
-.md-data-table-responsive-row.table-striped > tbody > tr > td,
-.md-data-table-responsive-row.table-striped > tbody > tr:nth-child(odd) {
-  background-color: #ffffff;
+.md-data-table-responsive-row.table-striped > tbody > tr > td {
+  background-color: #ffffff !important;
 }
 .md-data-table-responsive-row.table-striped > tbody > tr > td:nth-child(odd) {
-  background-color: #fcfcfc;
+  background-color: #fcfcfc !important;
 }
 .md-data-table-responsive-row > tbody > tr {
   display: block;
   margin-bottom: 3px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+.md-data-table-responsive-row > tbody > tr:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
 }
 .md-data-table-responsive-row > tbody > tr > td {
   background-color: #ffffff;
@@ -447,4 +449,8 @@ table.md-table td.md-cell md-select > .md-select-value > span.md-select-icon {
 table.md-table td.md-cell md-select > .md-select-value > span.md-select-icon:after {
   -webkit-transform: scaleY(0.4) scaleX(0.8);
           transform: scaleY(0.4) scaleX(0.8);
+}
+table.md-table.table-striped > tbody > tr:nth-child(odd) > td,
+table.md-table.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: #fcfcfc;
 }
