@@ -2,59 +2,25 @@
 
 angular.module('md.data.table').directive('mdDataTableContainer', mdDataTableContainer);
 
-function mdDataTableContainer($compile, $timeout) {
+function mdDataTableContainer($compile, $timeout, $rootScope) {
 
   function link($scope, element, attrs, ctrl, $transclude){
-
-    // var clone = $compile(element.find('table'))($scope);
-    // element.after(clone);
-    // element.after('<div>asd</div>');
-    // $transclude(function(clone){
-    //   element.clone()
-    // }));
-
-    // $transclude(function(transcludeEl){
-      // element.append(transcludeEl);
-      // element.parent().append(transcludeEl);
-    // });
-
-
-
-    // console.log(element.parent().append($transclude()));
   }
 
 
 
   function compile(element, scope) {
 
-
-
-      //  var t = tElement.find('table');
-  //
-  //
-  //   tElement.append(t);
-  //   console.log('telement', tElement);
-  //   tElement.append('<div>dummy</div>');
-  //
-  //
     return postLink;
   }
 
   // empty controller to be bind properties to in postLink function
   function Controller($element, $transclude) {
-    // console.log('test');
-    // console.log('transclude', $transclude);
-    // $element.append($transclude());
-    // $element.parent().append($transclude());
   }
 
   function postLink(scope, element, attrs) {
-    console.log('finished compiling everything');
-    // var t = element.find('table');
-    // var s = t.scope();
 
-    console.log('??', $timeout);
-
+    // recreate the dom in a hacky way (nested tables and such)
     $timeout(function(){
       //TODO: Use more specific selectors
 
@@ -64,33 +30,26 @@ function mdDataTableContainer($compile, $timeout) {
       var tr = tbody.find('tr').clone();
       var th = thead.find('th').clone();
 
-      // console.log($(element).find('th'));
-      // console.log('th', th);
-      // console.log('thead', thead);
 
-      //foreach tr found angular.element(tbody.find('tr')[0]).clone().empty();
-      // var responsiveTable = {};
-      // responsiveTable.tr = {}
-      // responsiveTable.tr.element = angular.element(tbody.find('tr')[0]).clone().empty();
-
-
-      // angular.forEach(tr, function (row){
-      //   console.log('row', row);
-      // });
-
-      // var row = angular.element(tr[0]).find('td');
+      var ourScope = table.scope();
       var newTable = angular.element('<table ng-show="columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems"></table>');
-      var newBody = angular.element('<tbody></tbody>');
+
+      var newBody = angular.element('<tbody md-body></tbody>');
       newTable.append(newBody);
 
       var responsiveTable = {};
       angular.forEach(tr, function (row){
         responsiveTable.tr = {};
-        responsiveTable.tr = new Array();
-        // responsiveTable.tr.push();
+
+
 
         responsiveTable.tr.element = angular.element(row).clone().empty();
-        responsiveTable.tr.element.addClass('column-mode').removeAttr('data-ng-repeat');
+        responsiveTable.tr.element.addClass('column-mode');
+        // If I add the removeAttr it compiles, but it obviously won't loop through the data
+        // and the bindings would'nt work, therefore no cool features :( 
+        responsiveTable.tr.element.removeAttr('data-ng-repeat');
+
+
         th = thead.find('th').clone();
 
         angular.forEach(angular.element(row).find('td'), function (cell){
@@ -117,22 +76,18 @@ function mdDataTableContainer($compile, $timeout) {
           responsiveTable.tr.td.element.append(responsiveTable.tr.td.table.element);
           responsiveTable.tr.element.append(responsiveTable.tr.td.element);
 
-
-          $compile(responsiveTable.tr.td.table.thead.element, table.scope());
-
-          // responsiveTable.tr.td = {};
+          responsiveTable.tr.td = {};
         });
+
 
         newBody.append(responsiveTable.tr.element);
         responsiveTable.tr = {};
       });
 
 
-      // newTable.append(responsiveTable.tr.element);
+      $compile(newTable, scope);
       element.append(newTable);
-      console.log('olha o escopo', table.scope());
 
-      $compile(newTable, table.scope());
 
 
 
@@ -163,50 +118,15 @@ function mdDataTableContainer($compile, $timeout) {
       //
       //   responsiveTable.tr.td = {};
       // });
-
-
-
-
-
-
-      // Final
-
-      // console.log('tr', responsiveTable.tr.empty())
-      // console.log('table', th);
     }, 0);
-    // console.log($compile(t.html(), scope));
-
-    // element.append(t);
-
-    // var original = element.clone(true);
-    // console.log(original);
-
-    // element.parent().append($compile(original.html()(scope)))
-
-    // console.log('added ', original);
-
-
-    // $timeout(function(){
-    //   var t = element.find('table');
-    //   var a = angular.element('<div></div>');
-    //
-    //   a.append(t);
-    //   element.append(a);
-    //   // console.log('return of append', element.append(t));
-    //   // $compile(t, t.scope());
-    //   element.append(angular.element('<div>asd</div>'));
-    // }, 0);
 
   }
 
   return {
-    // link: link,
     controller: Controller,
-    // transclude: true,
     compile: compile,
-    // require: '^^mdTable',
     restrict: 'EA'
   };
 }
 
-mdDataTableContainer.$inject = ['$compile', '$timeout'];
+mdDataTableContainer.$inject = ['$compile', '$timeout', '$rootScope'];

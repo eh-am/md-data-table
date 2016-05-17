@@ -11,20 +11,9 @@
 Column Mode? {{ columnMode }}
 <button type="button" name="button" class="md-button" ng-click="toggleColumnMode()">Toggle Column Mode</button>
 <md-data-table-container>
-        <!-- <table md-data-table md-row-select="selected" md-progress="deferred" md-row-update-callback="rowUpdateCallback()"> -->
-        <table id="md-data-table-1" md-data-table-column-mode="{{columnMode}}" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
-          <!-- <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
-            <tr md-row>
 
-              <th md-column ng-repeat="column in columns" data-md-order-by="{{column.orderBy}}"
-              ng-attr-numeric="{{column.numeric}}" ng-attr-unit="{{column.unit}}" name="{{column.name}}"
-               ng-attr-descend-first="{{column.descendFirst}}" ng-attr-trim="{{column.trim}}">
-                {{ column.name }}
-              </td>
-            </tr>
-          </thead> -->
-
-          <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
+        <table id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+          <thead md-head data-md-order="query.order" md-on-reorder="onReorder">
             <tr md-row>
               <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
               <th md-column md:order:by="type"><span>Type</span></th>
@@ -61,8 +50,138 @@ Column Mode? {{ columnMode }}
                 <td md-cell show-unit>{{dessert.calcium.value}}</td>
                 <td md-cell show-unit hide-sm>{{dessert.iron.value}}</td>
             </tr>
+
+            <tr md-row md-auto-select
+                data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+
+                <!-- <table ng-show="columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+                    <tbody>
+                        <tr style="border: 1px solid black; display:table;" md-auto-select
+                            data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+
+                          <td style="display: table-row;">
+                            <table>
+                              <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                                <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
+                              </thead>
+                              <tbody md-body style="display: table-cell;">
+                                <tr md-row>
+                                  <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                          <td style="display: table-row;">
+                            <table>
+
+                              <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                                <tr>
+                                <th md-column data-md-numeric data-md-order-by="carbs.value"><span>Carbs (g)</span></th>
+                                </tr>
+                              </thead>
+                              <tbody md-body style="display: table-cell;">
+                                <tr md-row>
+                                  <td md-cell>{{ dessert.carbs.value }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+                          <td style="display: table-row;">
+                            <table>
+
+                              <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                                <tr>
+                                <th md-column md:order:by="type"><span>Type</span></th>
+                                </tr>
+                              </thead>
+                              <tbody md-body style="display: table-cell;">
+                                <tr md-row>
+                                  <td md-cell>
+                                      <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
+                                          <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
+                                      </md-select>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+
+
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </tr>
+
             </tbody>
         </table>
+
+
+
+        <!--  Responsive -->
+        <!-- <table ng-show="columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+            <tbody>
+                <tr style="border: 1px solid black; display:table;" md-auto-select
+                    data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+
+                  <td style="display: table-row;">
+                    <table>
+                      <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                        <th md-column md:order:by="name"><span>Dessert (100g serving)</span></th>
+                      </thead>
+                      <tbody md-body style="display: table-cell;">
+                        <tr md-row>
+                          <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+
+                  <td style="display: table-row;">
+                    <table>
+
+                      <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                        <tr>
+                        <th md-column data-md-numeric data-md-order-by="carbs.value"><span>Carbs (g)</span></th>
+                        </tr>
+                      </thead>
+                      <tbody md-body style="display: table-cell;">
+                        <tr md-row>
+                          <td md-cell>{{ dessert.carbs.value }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+
+                  <td style="display: table-row;">
+                    <table>
+
+                      <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder" style="display: table-cell;">
+                        <tr>
+                        <th md-column md:order:by="type"><span>Type</span></th>
+                        </tr>
+                      </thead>
+                      <tbody md-body style="display: table-cell;">
+                        <tr md-row>
+                          <td md-cell>
+                              <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
+                                  <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
+                              </md-select>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+
+
+
+                </tr>
+            </tbody>
+        </table>
+ -->
 </md-data-table-container>
 
 <data-md-table-pagination md-limit="query.limit" md-limit-options="limitOptions"
