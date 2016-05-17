@@ -60,12 +60,11 @@
 
 
         <!--  Responsive -->
-        <table class="md-data-table-responsive-row table-striped" hide-gt-sm data-md-table md-progress="deferred" data-ng-model="selected" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
+        <table class="md-data-table-responsive table-striped" hide-gt-sm data-md-table md-progress="deferred" data-ng-model="selected" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems">
             <tbody>
 
               <tr md-auto-select
-                  data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit"
-                  flex>
+                  data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
 
                 <!--  Name -->
                 <td>
