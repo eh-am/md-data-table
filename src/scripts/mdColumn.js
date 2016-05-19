@@ -14,7 +14,7 @@ function mdColumn($compile, $mdUtil) {
     var tableCtrl = ctrls.shift();
 
     function attachSortIcon() {
-      var sortIcon = angular.element('<md-icon md-svg-icon="arrow-up.svg">');
+      var sortIcon = angular.element('<md-icon md-svg-icon="arrow-up.html">');
 
       $compile(sortIcon.addClass('md-sort-icon').attr('ng-class', 'getDirection()'))(scope);
 

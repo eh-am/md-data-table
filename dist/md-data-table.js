@@ -7,7 +7,7 @@
 (function (window, angular, undefined) {
 'use strict';
 
-angular.module('md.table.templates', ['md-data-table-edit.html', 'md-table-pagination.html', 'md-table-progress.html', 'arrow-up.svg', 'navigate-before.svg', 'navigate-first.svg', 'navigate-last.svg', 'navigate-next.svg']);
+angular.module('md.table.templates', ['md-data-table-edit.html', 'md-table-pagination.html', 'md-table-progress.html', 'arrow-up.html', 'navigate-before.html', 'navigate-first.html', 'navigate-last.html', 'navigate-next.html']);
 
 angular.module('md-data-table-edit.html', []).run(['$templateCache', function($templateCache) {
   $templateCache.put('md-data-table-edit.html',
@@ -115,21 +115,22 @@ angular.module('md-table-pagination.html', []).run(['$templateCache', function($
     '  <div class="label">{{$pagination.min()}} - {{$pagination.max()}} {{$pagination.label.of}} {{$pagination.total}}</div>\n' +
     '\n' +
     '  <md-button class="md-icon-button" type="button" ng-if="$pagination.showBoundaryLinks()" ng-click="$pagination.first()" ng-disabled="$pagination.disabled || !$pagination.hasPrevious()" aria-label="First">\n' +
-    '    <md-icon md-svg-icon="navigate-first.svg"></md-icon>\n' +
+    '    <md-icon md-svg-icon="navigate-first.html"></md-icon>\n' +
     '  </md-button>\n' +
     '\n' +
     '  <md-button class="md-icon-button" type="button" ng-click="$pagination.previous()" ng-disabled="$pagination.disabled || !$pagination.hasPrevious()" aria-label="Previous">\n' +
-    '    <md-icon md-svg-icon="navigate-before.svg"></md-icon>\n' +
+    '    <md-icon md-svg-icon="navigate-before.html"></md-icon>\n' +
     '  </md-button>\n' +
     '\n' +
     '  <md-button class="md-icon-button" type="button" ng-click="$pagination.next()" ng-disabled="$pagination.disabled || !$pagination.hasNext()" aria-label="Next">\n' +
-    '    <md-icon md-svg-icon="navigate-next.svg"></md-icon>\n' +
+    '    <md-icon md-svg-icon="navigate-next.html"></md-icon>\n' +
     '  </md-button>\n' +
     '\n' +
     '  <md-button class="md-icon-button" type="button" ng-if="$pagination.showBoundaryLinks()" ng-click="$pagination.last()" ng-disabled="$pagination.disabled || !$pagination.hasNext()" aria-label="Last">\n' +
-    '    <md-icon md-svg-icon="navigate-last.svg"></md-icon>\n' +
+    '    <md-icon md-svg-icon="navigate-last.html"></md-icon>\n' +
     '  </md-button>\n' +
-    '</div>');
+    '</div>\n' +
+    '');
 }]);
 
 angular.module('md-table-progress.html', []).run(['$templateCache', function($templateCache) {
@@ -141,28 +142,28 @@ angular.module('md-table-progress.html', []).run(['$templateCache', function($te
     '</tr>');
 }]);
 
-angular.module('arrow-up.svg', []).run(['$templateCache', function($templateCache) {
-  $templateCache.put('arrow-up.svg',
+angular.module('arrow-up.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('arrow-up.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>');
 }]);
 
-angular.module('navigate-before.svg', []).run(['$templateCache', function($templateCache) {
-  $templateCache.put('navigate-before.svg',
+angular.module('navigate-before.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('navigate-before.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>');
 }]);
 
-angular.module('navigate-first.svg', []).run(['$templateCache', function($templateCache) {
-  $templateCache.put('navigate-first.svg',
+angular.module('navigate-first.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('navigate-first.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 6 v12 h2 v-12 h-2z M17.41 7.41L16 6l-6 6 6 6 1.41-1.41L12.83 12z"/></svg>');
 }]);
 
-angular.module('navigate-last.svg', []).run(['$templateCache', function($templateCache) {
-  $templateCache.put('navigate-last.svg',
+angular.module('navigate-last.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('navigate-last.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15 6 v12 h2 v-12 h-2z M8 6L6.59 7.41 11.17 12l-4.58 4.59L8 18l6-6z"/></svg>');
 }]);
 
-angular.module('navigate-next.svg', []).run(['$templateCache', function($templateCache) {
-  $templateCache.put('navigate-next.svg',
+angular.module('navigate-next.html', []).run(['$templateCache', function($templateCache) {
+  $templateCache.put('navigate-next.html',
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>');
 }]);
 
@@ -269,7 +270,7 @@ function mdColumn($compile, $mdUtil) {
     var tableCtrl = ctrls.shift();
 
     function attachSortIcon() {
-      var sortIcon = angular.element('<md-icon md-svg-icon="arrow-up.svg">');
+      var sortIcon = angular.element('<md-icon md-svg-icon="arrow-up.html">');
 
       $compile(sortIcon.addClass('md-sort-icon').attr('ng-class', 'getDirection()'))(scope);
 

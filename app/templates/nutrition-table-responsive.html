@@ -10,7 +10,7 @@
 
 
 <md-table-container>
-        <table hide-sm hide-xs md-row-select="options.rowSelection"  multiple="{{options.multiSelect}}" data-ng-model="selected" id="md-data-table-1" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems" md-progress="promise">
+        <table hide-sm hide-xs md-row-select="options.rowSelection"  multiple="{{options.multiSelect}}" data-ng-model="selected" ng-show="!columnMode" data-md-table md-progress="deferred" md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems" md-progress="promise">
 
           <thead ng-if="!options.decapitate" md-head data-md-order="query.order" md-on-reorder="onReorder">
             <tr md-row>
@@ -19,6 +19,7 @@
               <th md-column data-md-order-by="date.value"><span>Date</span></th>
               <th md-column data-md-numeric data-md-order-by="calories.value" data-md-desc><span>Calories</span></th>
               <th md-column data-md-desc><span>Note</span></th>
+
               <th md-column data-md-numeric data-md-order-by="fat.value"><span>Fat (g)</span></th>
               <!-- <th md-column data-md-numeric data-md-order-by="carbs.value"><span>Carbs (g)</span></th>
               <th md-column data-md-numeric data-md-order-by="protein.value"><span>Protein (g)</span></th>

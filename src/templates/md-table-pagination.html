@@ -20,18 +20,18 @@
   <div class="label">{{$pagination.min()}} - {{$pagination.max()}} {{$pagination.label.of}} {{$pagination.total}}</div>
 
   <md-button class="md-icon-button" type="button" ng-if="$pagination.showBoundaryLinks()" ng-click="$pagination.first()" ng-disabled="$pagination.disabled || !$pagination.hasPrevious()" aria-label="First">
-    <md-icon md-svg-icon="navigate-first.svg"></md-icon>
+    <md-icon md-svg-icon="navigate-first.html"></md-icon>
   </md-button>
 
   <md-button class="md-icon-button" type="button" ng-click="$pagination.previous()" ng-disabled="$pagination.disabled || !$pagination.hasPrevious()" aria-label="Previous">
-    <md-icon md-svg-icon="navigate-before.svg"></md-icon>
+    <md-icon md-svg-icon="navigate-before.html"></md-icon>
   </md-button>
 
   <md-button class="md-icon-button" type="button" ng-click="$pagination.next()" ng-disabled="$pagination.disabled || !$pagination.hasNext()" aria-label="Next">
-    <md-icon md-svg-icon="navigate-next.svg"></md-icon>
+    <md-icon md-svg-icon="navigate-next.html"></md-icon>
   </md-button>
 
   <md-button class="md-icon-button" type="button" ng-if="$pagination.showBoundaryLinks()" ng-click="$pagination.last()" ng-disabled="$pagination.disabled || !$pagination.hasNext()" aria-label="Last">
-    <md-icon md-svg-icon="navigate-last.svg"></md-icon>
+    <md-icon md-svg-icon="navigate-last.html"></md-icon>
   </md-button>
 </div>

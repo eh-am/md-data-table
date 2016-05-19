@@ -87,7 +87,7 @@ module.exports = function (grunt) {
           hostname: '0.0.0.0',
           base: ['bower_components', 'dist', 'app']
         }
-      }      
+      }
     },
 
     // minify css files
@@ -112,7 +112,7 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          '.temp/templates.js': ['src/templates/*.html', 'src/icons/*.svg']
+          '.temp/templates.js': ['src/templates/*.html', 'src/icons/*']
         }
       }
     },
