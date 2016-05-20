@@ -13,6 +13,7 @@ Specification for Material Design data tables can be found [here](http://www.goo
 * [Contributing](#contributing)
 * [Responsiveness](#responsiveness)
 * [Testing](#testing)
+* [Upgrading](#upgrading)
 
 ## License
 
@@ -20,9 +21,7 @@ This software is provided free of charge and without restriction under the [MIT 
 
 ## Demo
 
-A live [demo](http://danielnagy.me/md-data-table).
-
-A fork-able [Codepen](http://codepen.io/anon/pen/BjvLVJ?editors=1010). Please use this to reproduce any issues you may be experiencing.
+A live [demo](http://codepen.io/eh-am/pen/XdLorV)
 
 ## Installation
 
@@ -608,7 +607,7 @@ Given the original table with two fields:
           <tbody md-body>
             <tr md-row md-select="dessert" md-auto-select md-select-id="name" data-md-on-select="log" md-on-deselect="deselect" x-md-auto-select="options.autoSelect"
                 data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
-                <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                <td md-cell data="dessert.name">{{dessert.name}}</td>
                 <td md-cell>
                     <md-select ng-model="dessert.type" placeholder="Other" ng-change="rowUpdateCallback()">
                         <md-option ng-value="type" ng-repeat="type in getTypes()">{{type}}</md-option>
@@ -637,7 +636,7 @@ The responsive one should be something along these terms:
               <!--  Body -->
               <tbody md-body>
                 <tr md-row>
-                  <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
+                  <td md-cell data="dessert.name">{{dessert.name}}</td>
                 </tr>
               </tbody>
             </table>
@@ -677,12 +676,6 @@ Responsive
 ![](docs/b0731d3bf94a3c917a6175e58f87cb13.png)
 
 
-If you have more questions, there's a working example on nutrition-table-responsive.html
-
-
-## Bugs/Not working
-For now, selecting rows is not working on responsive. So remember to remove the
-md-row-select attribute on it.
 
 
 # Testing
@@ -692,3 +685,13 @@ For unit tests, run grunt test:unit
 For e2e tests, run node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update once, then run grunt test:e2e
 
 To serve and keep watching for changes in test files, run grunt
+
+# Upgrading
+
+Some things to keep in mind when upgrading:
+- Try to start from the working Demo
+- Use ng-click whenever possible (for example, for the behaviour when clicking in a row)
+- As the responsive table and the normal one have different structure, you will have to change the way you iterate through
+the elements, be careful with that.
+- For the responsive table, due to its structure, the headers will have to be explicit declared, which means no ng-repeat :(
+- And, of course, always check the documentation (this file)
