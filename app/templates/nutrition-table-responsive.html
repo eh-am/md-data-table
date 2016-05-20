@@ -13,6 +13,10 @@
   </div>
 </md-toolbar>
 
+<data-md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" accesskey=""
+ md-page="query.page" md-total="{{desserts.count}}" md-on-paginate="onPaginate"
+ md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks">
+</data-md-table-pagination>
 
 <md-table-container>
         <table hide-sm hide-xs md-row-select="options.rowSelection"  multiple="{{options.multiSelect}}" data-ng-model="selected" ng-show="!columnMode" data-md-table md-row-update-callback="rowUpdateCallback()" md-row-dirty="dirtyItems" md-progress="promise">
