@@ -188,10 +188,12 @@ md-select.md-table-select > .md-select-value > span.md-select-icon:after {
 }
 .md-data-table-responsive > tbody > tr tbody {
   float: right;
+  display: table;
+  width: 70%;
 }
 .md-data-table-responsive > tbody > tr td {
   border: none !important;
-  text-align: right;
+  text-align: right !important;
 }
 .md-data-table-responsive {
   width: 100%;
@@ -228,6 +230,22 @@ md-select.md-table-select > .md-select-value > span.md-select-icon:after {
   content: attr(data-title);
   float: left;
   font-size: 13px;
+}
+.md-data-table-responsive {
+  margin-top: 0;
+}
+.md-data-table-responsive td.md-checkbox-cell > md-checkbox {
+  height: 52px;
+}
+.md-data-table-responsive thead th.md-checkbox-column {
+  display: none;
+}
+.md-data-table-responsive tr[md-select-row] table > tbody > tr > td {
+  padding: 0 24px !important;
+}
+.md-data-table-responsive.md-table.md-row-select > tbody > tr > td.md-cell:not(.md-checkbox-cell) {
+  padding-left: 0;
+  padding-right: 0;
 }
 md-toolbar.md-table-toolbar {
   box-shadow: none;
@@ -354,6 +372,9 @@ table.md-table th.md-column:hover md-icon.md-sort-icon,
 table.md-table th.md-column.md-active md-icon.md-sort-icon {
   opacity: 1;
 }
+table.md-table tr.md-row:focus {
+  outline: none;
+}
 table.md-table tr.md-row[ng\:repeat].ng-leave,
 table.md-table tr.md-row[ng-repeat].ng-leave,
 table.md-table tr.md-row[x-ng-repeat].ng-leave,
@@ -449,4 +470,7 @@ table.md-table td.md-cell md-select > .md-select-value > span.md-select-icon {
 table.md-table td.md-cell md-select > .md-select-value > span.md-select-icon:after {
   -webkit-transform: scaleY(0.4) scaleX(0.8);
           transform: scaleY(0.4) scaleX(0.8);
+}
+table.md-table.table-striped > tbody > tr:nth-child(odd) {
+  background-color: #fcfcfc;
 }

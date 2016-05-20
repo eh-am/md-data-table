@@ -14,11 +14,16 @@
   thead, tbody{
     display: table-cell;
   }
-  tbody{ float: right; }
+  tbody{
+    float: right;
+    // float: right;
+    display: table;
+    width: 70%;
+  }
 
   td{
     border: none !important;
-    text-align: right;
+    text-align: right !important;
   }
 }
 
@@ -69,4 +74,24 @@
           }
         }
       }
+}
+
+
+.md-data-table-responsive{
+  margin-top: 0;
+}
+
+.md-data-table-responsive td.md-checkbox-cell > md-checkbox{
+  height: 52px;
+}
+.md-data-table-responsive thead th.md-checkbox-column{
+  display: none;
+}
+.md-data-table-responsive tr[md-select-row] table > tbody > tr > td {
+  padding: 0 24px !important;
+}
+
+.md-data-table-responsive.md-table.md-row-select > tbody > tr > td.md-cell:not(.md-checkbox-cell) {
+  padding-left: 0;
+  padding-right: 0;
 }

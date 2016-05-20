@@ -1,6 +1,5 @@
 <md-data-table-toolbar ng-show="!selected.length">
     <h2 class="md-title">Nutrition</h2>
-    (if it's working here, then we are fine)
 </md-data-table-toolbar>
 
 <md-data-table-toolbar class="alternate" ng-show="selected.length">
@@ -41,7 +40,7 @@
 
 
             <tbody md-body>
-            <tr md-row md-auto-select 
+            <tr md-row md-auto-select
                 data-ng-repeat="dessert in desserts.data | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
                 <td md-cell md-editable="text" data="dessert.name">{{dessert.name}}</td>
                 <td md-cell>

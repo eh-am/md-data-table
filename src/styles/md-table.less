@@ -118,6 +118,7 @@ table.md-table {
   }
 
   tr.md-row {
+    &:focus{ outline: none; }
     &[ng\:repeat].ng-leave,
     &[ng-repeat].ng-leave,
     &[x-ng-repeat].ng-leave,
@@ -225,13 +226,10 @@ table.md-table {
     }
   }
 
-  // &.table-striped {
-  //   > tbody > tr:nth-child(odd) {
-  //     > td,
-  //     > th {
-  //       background-color: @md-strip;
-  //     }
-  //   }
-  // }
+  &.table-striped {
+    > tbody > tr:nth-child(odd) {
+        background-color: @md-strip;
+    }
+  }
 
 }
